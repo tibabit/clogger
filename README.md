@@ -1,3 +1,3 @@
-### clogger
+# clogger
 
-# logging library for c/c++
+### logging library for c/c++

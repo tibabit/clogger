@@ -8,8 +8,7 @@
 #ifndef INCLUDE_CLOGGER_H_
 #define INCLUDE_CLOGGER_H_
 
-typedef const char * const msg_t;
-
+typedef const char * const string_t;
 
 typedef enum
 {
@@ -27,8 +26,8 @@ typedef enum
 	BLUE,
 }LogColor;
 
-typedef void (*generic_log_functon)(LogLevel, msg_t);
-typedef void (*log_functon)(msg_t);
+typedef void (*generic_log_functon)(LogLevel, string_t, ...);
+typedef void (*log_functon)(string_t, ...);
 
 
 typedef struct _clogger

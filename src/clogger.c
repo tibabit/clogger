@@ -10,6 +10,10 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdarg.h>
+#include <stdlib.h>
+
+#include "log_entry.h"
+#include "console_transport.h"
 
 #define COLOR(ANSI_CODE)        ("\x1b[3"#ANSI_CODE"m")
 #define COLOR_GREEN		COLOR(2)
@@ -21,53 +25,132 @@
 
 #define NEWLINE     "\n"
 
-
-typedef struct _LoggerConfig
-{
-    char *hint;
-    char *color;
-}LoggerConfig;
-
-//! global clogger object
-clogger logger;
-
-LoggerConfig config[10];
-
 //! private funcions
 
 //! logging functions declarations
-void clogger_log(LogLevel level, string_t msg, ...);
-void clogger_info(string_t msg, ...);
-void clogger_warn(string_t msg, ...);
-void clogger_error(string_t msg, ...);
-void clogger_debug(string_t msg, ...);
+void clogger_log(clogger* logger, const string_t title, const string_t msg, ...);
+void clogger_info(clogger* logger, const string_t msg, ...);
+void clogger_warn(clogger* logger, const string_t msg, ...);
+void clogger_error(clogger* logger, const string_t msg, ...);
+void clogger_debug(clogger* logger, const string_t msg, ...);
 
-void clogger_config_level(LogLevel level, char * hint, char* color);
+void clogger_log_priv(clogger* logger,
+        log_severity_t severity,
+        const string_t title,
+        string_t frmt,
+        va_list* vargs);
+void clogger_add_severity(clogger *logger, log_severity_t severity, const string_t title);
 
 //! logger initializer
 
-void clogger_init(void)
+clogger* clogger_init(void)
 {
+    clogger *logger = calloc(1, sizeof(clogger));
+    ENSURE(logger != NULL, NULL);
+
     // initialize log functions
-    logger.log = clogger_log;
-    logger.info = clogger_info;
-    logger.warn = clogger_warn;
-    logger.error = clogger_error;
-    logger.debug = clogger_debug;
+    logger->log = clogger_log;
+    logger->info = clogger_info;
+    logger->warn = clogger_warn;
+    logger->error = clogger_error;
+    logger->debug = clogger_debug;
 
-    // initialize color tables
-    clogger_config_level(INFO, 	    "info", 	COLOR_GREEN);
-    clogger_config_level(WARNING,   "warn", 	COLOR_YELLOW);
-    clogger_config_level(ERROR,     "error", 	COLOR_RED);
-    clogger_config_level(DEBUG,     "debug",    COLOR_CYAN);
+    // add default transports
+    
+    console_transport_t * console_transport = console_transport_new();
+    clogger_add_transport(logger, (transport_t *)console_transport);
+    
+    // add severity levels
+    clogger_add_severity(logger, SEVERITY_EMERGENCY, "emerg");
+    clogger_add_severity(logger, SEVERITY_ALERT, "alert");
+    clogger_add_severity(logger, SEVERITY_CRITICAL, "crit");
+    clogger_add_severity(logger, SEVERITY_ERROR, "error");
+    clogger_add_severity(logger, SEVERITY_WARNING, "warn");
+    clogger_add_severity(logger, SEVERITY_NOTICE, "notice");
+    clogger_add_severity(logger, SEVERITY_INFO, "info");
+    clogger_add_severity(logger, SEVERITY_DEBUG, "debug");
+
+    return logger;
 }
 
-void clogger_config_level(LogLevel level, char * hint, char* color)
+void clogger_destroy(clogger *logger)
 {
-    config[level].hint = strdup(hint);
-    config[level].color = strdup(color);
+    ASSERT(logger != NULL);
+
+    if (logger->transports != NULL)
+    {
+        for (size_t i = 0; i < logger->num_transport; i++)
+        {
+            (logger->transports[i])->destroy(logger->transports[i]);
+        }
+
+        free(logger->transports);
+    }
+    if (logger->severities != NULL)
+    {
+        for (size_t i = 0; i < logger->severity_levels; i++)
+        {
+            free(logger->severities[i]);
+        }
+
+        free(logger->severities);
+    }
 }
 
+void clogger_add_severity(clogger *logger, log_severity_t severity, const string_t title)
+{
+    ASSERT(logger != NULL);
+    ASSERT(title != NULL);
+
+    logger->severities = realloc(logger->severities, sizeof(string_t) * (logger->severity_levels + 1));
+    ENSURE(logger->severities != NULL);
+
+    logger->severities[logger->severity_levels] = strdup(title);
+    logger->severity_levels++;
+}
+
+void clogger_add_transport(clogger *logger, transport_t* transport)
+{
+    ASSERT(logger != NULL);
+    ASSERT(transport != NULL);
+
+    logger->transports = realloc(logger->transports, sizeof(transport_t*) * (logger->num_transport + 1));
+    ENSURE(logger->transports != NULL);
+
+    logger->transports[logger->num_transport] = transport;
+    logger->num_transport++;
+}
+
+void clogger_log_priv(clogger* logger,
+        log_severity_t severity,
+        const string_t title,
+        string_t frmt,
+        va_list* vargs)
+{
+    ASSERT(logger != NULL);
+    ASSERT(frmt != NULL);
+    ASSERT(vargs != NULL);
+
+    log_entry_t* log_entry = log_entry_new();
+
+    log_entry->title = title;
+    log_entry->severity = severity;
+    log_entry->timestamp = time(NULL);
+    log_entry->msg_frmt = frmt;
+    log_entry->msg_args = vargs;
+    log_entry->catagory = logger->catagory;
+
+    ENSURE(log_entry != NULL);
+
+    for (size_t i = 0; i < logger->num_transport; i++)
+    {
+        (logger->transports[i])->write(logger->transports[i], log_entry);
+    }
+
+    log_entry_destroy(log_entry);
+}
+
+#if 0
 void clogger_log_priv(LogLevel level, string_t frmt, va_list vargs)
 {
 
@@ -83,54 +166,61 @@ void clogger_log_priv(LogLevel level, string_t frmt, va_list vargs)
     // reset terminal color
     printf("%s", COLOR_WHITE);
 }
+#endif
 
 //! logging functions definitions
-void clogger_log(LogLevel level, string_t frmt, ...)
+void clogger_log(clogger* logger, string_t title, string_t frmt, ...)
 {
+    ASSERT(logger != NULL);
+
     va_list args;
     va_start(args, frmt);
 
-    clogger_log_priv(level, frmt, args); 
+    clogger_log_priv(logger, SEVERITY_UNDEFINED, title, frmt, &args); 
 
     va_end(args);
 }
 
-void clogger_info(string_t frmt, ...)
+void clogger_info(clogger* logger, string_t frmt, ...)
 {
+    ASSERT(logger != NULL);
     va_list args;
     va_start(args, frmt);
 
-    clogger_log_priv(INFO, frmt, args); 
+    clogger_log_priv(logger, SEVERITY_INFO, logger->severities[SEVERITY_INFO], frmt, &args); 
 
     va_end(args);
 }
 
-void clogger_warn(string_t frmt, ...)
+void clogger_warn(clogger* logger, string_t frmt, ...)
 {
+    ASSERT(logger != NULL);
     va_list args;
     va_start(args, frmt);
 
-    clogger_log_priv(WARNING, frmt, args); 
+    clogger_log_priv(logger, SEVERITY_WARNING, logger->severities[SEVERITY_WARNING], frmt, &args); 
 
     va_end(args);
 }
 
-void clogger_error(string_t frmt, ...)
+void clogger_error(clogger* logger, string_t frmt, ...)
 {
+    ASSERT(logger != NULL);
     va_list args;
     va_start(args, frmt);
 
-    clogger_log_priv(ERROR, frmt, args); 
+    clogger_log_priv(logger, SEVERITY_ERROR, logger->severities[SEVERITY_ERROR], frmt, &args); 
 
     va_end(args);
 }
 
-void clogger_debug(string_t frmt, ...)
+void clogger_debug(clogger* logger, string_t frmt, ...)
 {
+    ASSERT(logger != NULL);
     va_list args;
     va_start(args, frmt);
 
-    clogger_log_priv(DEBUG, frmt, args); 
+    clogger_log_priv(logger, SEVERITY_DEBUG, logger->severities[SEVERITY_DEBUG], frmt, &args); 
 
     va_end(args);
 }

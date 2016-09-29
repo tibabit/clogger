@@ -5,42 +5,39 @@
  *      Author: vikash
  */
 
-#ifndef INCLUDE_CLOGGER_H_
-#define INCLUDE_CLOGGER_H_
+#ifndef CLOGGER_H_
+#define CLOGGER_H_
 
-typedef const char * const string_t;
+#include <string.h>
 
-typedef enum
-{
-	INFO,
-	WARNING,
-	ERROR,
-	DEBUG
-}LogLevel;
+#include "internals.h"
+#include "transport.h"
 
-typedef enum
-{
-	GREEN,
-	YELLOW,
-	RED,
-	BLUE,
-}LogColor;
+typedef struct _clogger clogger;
 
-typedef void (*generic_log_functon)(LogLevel, string_t, ...);
-typedef void (*log_functon)(string_t, ...);
-
+typedef void (*generic_log_fn)(clogger* logger, const string_t, const string_t, ...);
+typedef void (*level_log_fn)(clogger* logger, const string_t, ...);
 
 typedef struct _clogger
 {
-	generic_log_functon log;
-	log_functon info;
-	log_functon warn;
-	log_functon error;
-	log_functon debug;
-}clogger;
+    /** logging functions */
+    generic_log_fn log;
+    level_log_fn info;
+    level_log_fn warn;
+    level_log_fn error;
+    level_log_fn debug;
 
-extern clogger logger;
+    /** logger configurations */
+    string_t catagory;
+    size_t num_transport;
+    transport_t **transports;
 
-void clogger_init(void);
+    size_t severity_levels;
+    string_t *severities;
+} clogger;
 
-#endif /* INCLUDE_CLOGGER_H_ */
+clogger* clogger_init(void);
+void clogger_destroy(clogger *logger);
+void clogger_add_transport(clogger *logger, transport_t* transport);
+
+#endif /* CLOGGER_H_ */

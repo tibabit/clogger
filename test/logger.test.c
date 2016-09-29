@@ -2,11 +2,12 @@
 
 int main()
 {
-    clogger_init();
+    clogger* logger = clogger_init();
 
-    logger.info("Info type log %s", "arg 1");
-    logger.warn("Warning type log");
-    logger.error("Error type log");
-    logger.debug("Debug type log");
+    logger->info(logger, "Info type log %s", "arg 1");
+    logger->warn(logger, "Warning type log");
+    logger->error(logger, "Error type log");
+    logger->debug(logger, "Debug type log");
 
+    clogger_destroy(logger);
 }

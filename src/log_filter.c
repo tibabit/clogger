@@ -28,26 +28,8 @@
 
 #include "internals.h"
 
-bool_t log_filter_filter(transport_t *transport, log_entry_t *entry);
 
-log_filter_t * log_filter_new()
-{
-    log_filter_t* log_filter = calloc(1, sizeof(log_filter_t));
-    ENSURE(log_filter != NULL, NULL);
-
-    log_filter->filter = log_filter_filter;
-
-    return log_filter;
-}
-
-void log_filter_destroy(log_filter_t *log_filter)
-{
-    ASSERT(log_filter != NULL);
-
-    free(log_filter);
-}
-
-bool_t log_filter_filter(transport_t *transport, log_entry_t *entry)
+bool_t log_filter(transport_t *transport, log_entry_t *entry)
 {
     ASSERT(transport != NULL, FALSE);
     ASSERT(entry != NULL, FALSE);

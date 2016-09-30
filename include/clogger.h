@@ -60,7 +60,7 @@ typedef struct _clogger
     size_t severity_levels;
     string_t *severities;
 
-    log_filter_t *log_filter;
+    log_filter_fn filter;
 } clogger;
 
 clogger* clogger_init(void);

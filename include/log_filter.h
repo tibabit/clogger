@@ -29,16 +29,9 @@
 #include "transport.h"
 #include "log_entry.h"
 
-typedef bool_t (*filter_fn)(transport_t *transport, log_entry_t *entry);
+typedef bool_t (*log_filter_fn)(transport_t *transport, log_entry_t *entry);
 
-typedef struct _log_filter_t
-{
-    filter_fn filter;
-}log_filter_t;
-
-
-log_filter_t * log_filter_new();
-void log_filter_destroy(log_filter_t *log_filter);
+bool_t log_filter(transport_t *transport, log_entry_t *entry);
 
 #endif /* end of include guard: LOG_FILTER_H */
 

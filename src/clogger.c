@@ -94,7 +94,7 @@ clogger* clogger_init(void)
     clogger_add_severity(logger, SEVERITY_DEBUG, "debug");
 
     // add message filter
-    logger->log_filter = log_filter_new();
+    logger->filter = log_filter;
 
     return logger;
 }
@@ -120,10 +120,6 @@ void clogger_destroy(clogger *logger)
         }
 
         free(logger->severities);
-    }
-    if (logger->log_filter != NULL)
-    {
-        log_filter_destroy(logger->log_filter);
     }
     free(logger);
 }
@@ -175,7 +171,7 @@ void clogger_log_priv(clogger* logger,
 
     for (size_t i = 0; i < logger->num_transport; i++)
     {
-        if (logger->log_filter->filter(logger->transports[i], log_entry)) 
+        if (logger->filter(logger->transports[i], log_entry)) 
         {
             (logger->transports[i])->write(logger->transports[i], log_entry);
         }

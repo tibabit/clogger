@@ -22,51 +22,11 @@
  * SOFTWARE.
  */
 
-#include "file_transport.h"
+#ifndef CONFIG_H
 
-#include <stdlib.h>
+#define CONFIG_H
 
-#include "internals.h"
-#include "config.h"
+#define DEFAULT_LOG_SEVERITY    SEVERITY_INFO
 
-void file_transport_write(transport_t *transport, log_entry_t *entry);
-void file_transport_destory(transport_t *transport);
+#endif /* end of include guard: CONFIG_H */
 
-file_transport_t * file_transport_new()
-{
-    file_transport_t *transport = calloc(1, sizeof(file_transport_t));
-
-    ENSURE(transport != NULL, NULL);
-
-    transport->write = file_transport_write;
-    transport->destroy = file_transport_destory;
-    transport->severity = DEFAULT_LOG_SEVERITY;
-
-    return transport;
-}
-
-void file_transport_write(transport_t *transport, log_entry_t *entry)
-{
-    ASSERT(transport != NULL);
-    ASSERT(entry != NULL);
-
-    file_transport_t *file_transport = (file_transport_t *)transport;
-
-    vfprintf(file_transport->stream, entry->msg_frmt, *(entry->msg_args));
-    fprintf(file_transport->stream, "\n");
-}
-
-void file_transport_destory(transport_t *transport)
-{
-    ASSERT(transport != NULL);
-
-    file_transport_t *file_transport = (file_transport_t *)transport;
-
-    if (file_transport->stream != NULL)
-    {
-        fclose(file_transport->stream);
-    }
-
-    free(transport);
-
-}

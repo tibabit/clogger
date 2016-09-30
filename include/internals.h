@@ -26,7 +26,18 @@
 
 #define INTERNALS_H
 
+#ifdef FALSE
+    #undef FALSE
+#endif
+#define FALSE 0
+
+#ifdef TRUE
+    #undef TRUE
+#endif
+#define TRUE 1
+
 typedef char * string_t;
+typedef unsigned char bool_t;
 
 #define ASSERT(expr, ...)   \
     if(!(expr))             \

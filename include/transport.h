@@ -37,6 +37,7 @@ typedef struct _transport
 {
     msg_writer_fn write;
     destroy_transport_fn destroy;
+    log_severity_t severity;
 }transport_t;
 
 #endif /* end of include guard: TRANSPORT_H */

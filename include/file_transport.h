@@ -34,6 +34,7 @@ typedef struct _file_transport
 {
     msg_writer_fn write;
     destroy_transport_fn destroy;
+    log_severity_t severity;
     FILE *stream;
 }file_transport_t;
 

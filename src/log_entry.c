@@ -44,4 +44,6 @@ void log_entry_destroy(log_entry_t * entry)
     ASSERT(entry != NULL);
 
     /** free up all memories */
+
+    free(entry);
 }

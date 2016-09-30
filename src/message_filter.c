@@ -22,51 +22,39 @@
  * SOFTWARE.
  */
 
-#include "file_transport.h"
+#include "message_filter.h"
 
 #include <stdlib.h>
 
 #include "internals.h"
-#include "config.h"
 
-void file_transport_write(transport_t *transport, log_entry_t *entry);
-void file_transport_destory(transport_t *transport);
+bool_t message_filter_filter(transport_t *transport, log_entry_t *entry);
 
-file_transport_t * file_transport_new()
+message_filter_t * message_filter_new()
 {
-    file_transport_t *transport = calloc(1, sizeof(file_transport_t));
+    message_filter_t* message_filter = calloc(1, sizeof(message_filter_t));
+    ENSURE(message_filter != NULL, NULL);
 
-    ENSURE(transport != NULL, NULL);
+    message_filter->filter = message_filter_filter;
 
-    transport->write = file_transport_write;
-    transport->destroy = file_transport_destory;
-    transport->severity = DEFAULT_LOG_SEVERITY;
-
-    return transport;
+    return message_filter;
 }
 
-void file_transport_write(transport_t *transport, log_entry_t *entry)
+void message_filter_destroy(message_filter_t *message_filter)
 {
-    ASSERT(transport != NULL);
-    ASSERT(entry != NULL);
+    ASSERT(message_filter != NULL);
 
-    file_transport_t *file_transport = (file_transport_t *)transport;
-
-    vfprintf(file_transport->stream, entry->msg_frmt, *(entry->msg_args));
-    fprintf(file_transport->stream, "\n");
+    free(message_filter);
 }
 
-void file_transport_destory(transport_t *transport)
+bool_t message_filter_filter(transport_t *transport, log_entry_t *entry)
 {
-    ASSERT(transport != NULL);
+    ASSERT(transport != NULL, FALSE);
+    ASSERT(entry != NULL, FALSE);
 
-    file_transport_t *file_transport = (file_transport_t *)transport;
-
-    if (file_transport->stream != NULL)
+    if (transport->severity >= entry->severity)
     {
-        fclose(file_transport->stream);
+        return TRUE;
     }
-
-    free(transport);
-
+    return FALSE;
 }

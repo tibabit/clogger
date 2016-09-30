@@ -80,7 +80,6 @@ clogger* clogger_init(void)
     logger->debug = clogger_debug;
 
     // add default transports
-    
     console_transport_t * console_transport = console_transport_new();
     clogger_add_transport(logger, (transport_t *)console_transport);
     
@@ -93,6 +92,9 @@ clogger* clogger_init(void)
     clogger_add_severity(logger, SEVERITY_NOTICE, "notice");
     clogger_add_severity(logger, SEVERITY_INFO, "info");
     clogger_add_severity(logger, SEVERITY_DEBUG, "debug");
+
+    // add message filter
+    logger->message_filter = message_filter_new();
 
     return logger;
 }
@@ -119,6 +121,11 @@ void clogger_destroy(clogger *logger)
 
         free(logger->severities);
     }
+    if (logger->message_filter != NULL)
+    {
+        message_filter_destroy(logger->message_filter);
+    }
+    free(logger);
 }
 
 void clogger_add_severity(clogger *logger, log_severity_t severity, const string_t title)
@@ -168,7 +175,10 @@ void clogger_log_priv(clogger* logger,
 
     for (size_t i = 0; i < logger->num_transport; i++)
     {
-        (logger->transports[i])->write(logger->transports[i], log_entry);
+        if (logger->message_filter->filter(logger->transports[i], log_entry)) 
+        {
+            (logger->transports[i])->write(logger->transports[i], log_entry);
+        }
     }
 
     log_entry_destroy(log_entry);

@@ -36,7 +36,7 @@
 
 #include "internals.h"
 #include "transport.h"
-#include "message_filter.h"
+#include "log_filter.h"
 
 typedef struct _clogger clogger;
 
@@ -60,7 +60,7 @@ typedef struct _clogger
     size_t severity_levels;
     string_t *severities;
 
-    message_filter_t *message_filter;
+    log_filter_t *log_filter;
 } clogger;
 
 clogger* clogger_init(void);

@@ -22,23 +22,39 @@
  * SOFTWARE.
  */
 
-#ifndef MESSAGE_FILTER_H
+#include "log_filter.h"
 
-#define MESSAGE_FILTER_H
+#include <stdlib.h>
 
-#include "transport.h"
-#include "log_entry.h"
+#include "internals.h"
 
-typedef bool_t (*filter_fn)(transport_t *transport, log_entry_t *entry);
+bool_t log_filter_filter(transport_t *transport, log_entry_t *entry);
 
-typedef struct _message_filter_t
+log_filter_t * log_filter_new()
 {
-    filter_fn filter;
-}message_filter_t;
+    log_filter_t* log_filter = calloc(1, sizeof(log_filter_t));
+    ENSURE(log_filter != NULL, NULL);
 
+    log_filter->filter = log_filter_filter;
 
-message_filter_t * message_filter_new();
-void message_filter_destroy(message_filter_t *message_filter);
+    return log_filter;
+}
 
-#endif /* end of include guard: MESSAGE_FILTER_H */
+void log_filter_destroy(log_filter_t *log_filter)
+{
+    ASSERT(log_filter != NULL);
 
+    free(log_filter);
+}
+
+bool_t log_filter_filter(transport_t *transport, log_entry_t *entry)
+{
+    ASSERT(transport != NULL, FALSE);
+    ASSERT(entry != NULL, FALSE);
+
+    if (transport->severity >= entry->severity)
+    {
+        return TRUE;
+    }
+    return FALSE;
+}

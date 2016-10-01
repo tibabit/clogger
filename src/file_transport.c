@@ -24,13 +24,30 @@
 
 #include "file_transport.h"
 
+typedef struct _file_transport
+{
+    msg_writer_fn write;
+    destroy_transport_fn destroy;
+    log_severity_t severity;
+    FILE *stream;
+    bool_t log_catagory;    // whether to log logger catagory or not
+    bool_t colorize;        // where to show colorful log (for console transport only)
+}file_transport_t;
+
 #include <stdlib.h>
 
 #include "internals.h"
 #include "config.h"
 
+/**
+ *
+ * private functions
+ *
+ */
 void file_transport_write(transport_t *transport, log_entry_t *entry);
 void file_transport_destory(transport_t *transport);
+
+void file_transport_set_stream(file_transport_t *transport, FILE *stream);
 
 file_transport_t * file_transport_new()
 {
@@ -52,8 +69,7 @@ void file_transport_write(transport_t *transport, log_entry_t *entry)
 
     file_transport_t *file_transport = (file_transport_t *)transport;
 
-    vfprintf(file_transport->stream, entry->msg_frmt, *(entry->msg_args));
-    fprintf(file_transport->stream, "\n");
+    fprintf(file_transport->stream, "%s\n", entry->message);
 }
 
 void file_transport_destory(transport_t *transport)
@@ -69,4 +85,12 @@ void file_transport_destory(transport_t *transport)
 
     free(transport);
 
+}
+
+void file_transport_set_stream(file_transport_t *transport, FILE *stream)
+{
+    ASSERT(transport != NULL);
+    ASSERT(stream != NULL);
+
+    transport->stream = stream;
 }

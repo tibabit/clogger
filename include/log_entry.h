@@ -43,7 +43,7 @@ typedef enum
     SEVERITY_WARNING,        /* Warning conditions */
     SEVERITY_NOTICE,         /* normal but significant conditions */
     SEVERITY_INFO,           /* informational message */
-    SEVERITY_DEBUG,           /* debug level message */
+    SEVERITY_DEBUG,          /* debug level message */
     SEVERITY_UNDEFINED
 }log_severity_t;
 
@@ -56,8 +56,7 @@ typedef struct
     string_t title;
     time_t  timestamp;
     string_t catagory;
-    va_list *msg_args;
-    string_t msg_frmt;
+    string_t message;
 }log_entry_t;
 
 /**

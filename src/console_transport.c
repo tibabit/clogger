@@ -28,13 +28,15 @@
 
 #include "internals.h"
 
+void file_transport_set_stream(file_transport_t *transport, FILE *stream);
+
 console_transport_t * console_transport_new()
 {
     console_transport_t *transport = file_transport_new();
 
     ENSURE(transport != NULL, NULL);
 
-    transport->stream = stdout;
+    file_transport_set_stream(transport, stdout);
 
     return transport;
 }

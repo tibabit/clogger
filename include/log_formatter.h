@@ -22,17 +22,21 @@
  * SOFTWARE.
  */
 
-#ifndef FILE_TRANSPORT_H
+#ifndef LOG_FORMATTER_H
 
-#define FILE_TRANSPORT_H
+#define LOG_FORMATTER_H
 
-#include <stdio.h>
+#include "internals.h"
+#include "log_entry.h"
 
-#include "transport.h"
+#define FORMAT_TIME         'Y'
+#define FORMAT_TITLE        'T'
+#define FORMAT_CATAGORY     'C'
+#define FORMAT_MESSAGE      'M'
 
-typedef struct _file_transport file_transport_t;
+typedef string_t (*log_formatter_fn)(const string_t frmt, log_entry_t* entry);
 
-file_transport_t * file_transport_new();
-int file_transport_setopt(file_transport_t *transport, transport_option_t option, void *data);
+string_t log_formatter_format(const string_t frmt, log_entry_t* entry);
 
-#endif /* end of include guard: FILE_TRANSPORT_H */
+#endif /* end of include guard: LOG_FORMATTER_H */
+

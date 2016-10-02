@@ -40,12 +40,12 @@
 #include "console_transport.h"
 
 #define COLOR(ANSI_CODE)        ("\x1b[3"#ANSI_CODE"m")
-#define COLOR_GREEN		COLOR(2)
-#define COLOR_RED		COLOR(1)
-#define COLOR_BLUE		COLOR(4)
-#define COLOR_YELLOW		COLOR(3)
-#define COLOR_CYAN		COLOR(6)
-#define COLOR_WHITE		COLOR(7)
+#define COLOR_GREEN             COLOR(2)
+#define COLOR_RED               COLOR(1)
+#define COLOR_BLUE              COLOR(4)
+#define COLOR_YELLOW            COLOR(3)
+#define COLOR_CYAN              COLOR(6)
+#define COLOR_WHITE             COLOR(7)
 
 #define NEWLINE     "\n"
 
@@ -62,9 +62,9 @@ void clogger_log_priv(clogger* logger,
         log_severity_t severity,
         const string_t title,
         string_t frmt,
-        va_list vargs);
+        va_list* vargs);
 void clogger_add_severity(clogger *logger, log_severity_t severity, const string_t title);
-void clogger_prepare_log_message(string_t *message, string_t frmt, va_list vargs);
+void clogger_prepare_log_message(string_t *message, string_t frmt, va_list* vargs);
 
 //! logger initializer
 
@@ -83,7 +83,8 @@ clogger* clogger_init(void)
     // add default transports
     console_transport_t * console_transport = console_transport_new();
     clogger_add_transport(logger, (transport_t *)console_transport);
-    
+    // add log formaatter
+
     // add severity levels
     clogger_add_severity(logger, SEVERITY_EMERGENCY, "emerg");
     clogger_add_severity(logger, SEVERITY_ALERT, "alert");
@@ -96,6 +97,7 @@ clogger* clogger_init(void)
 
     // add message filter
     logger->filter = log_filter;
+
 
     return logger;
 }
@@ -153,7 +155,7 @@ void clogger_log_priv(clogger* logger,
         log_severity_t severity,
         const string_t title,
         string_t frmt,
-        va_list vargs)
+        va_list* vargs)
 {
     ASSERT(logger != NULL);
     ASSERT(frmt != NULL);
@@ -179,7 +181,7 @@ void clogger_log_priv(clogger* logger,
 
     log_entry_destroy(log_entry);
 }
-void clogger_prepare_log_message(string_t *message, string_t frmt, va_list vargs)
+void clogger_prepare_log_message(string_t *message, string_t frmt, va_list* vargs)
 {
     ASSERT(message != NULL);
     ASSERT(frmt != NULL);
@@ -187,14 +189,7 @@ void clogger_prepare_log_message(string_t *message, string_t frmt, va_list vargs
     FILE* devNull = fopen("/dev/null", "w");
     ENSURE(devNull != NULL);
 
-    va_list tempArgs;
-    va_copy(tempArgs, vargs);
-
-    size_t len = vfprintf(devNull, frmt, tempArgs) + 1;
-
-    *message = malloc(len);
-    ENSURE(*message != NULL);
-    vsnprintf(*message, len, frmt, vargs);
+    vasprintf(message, frmt, *vargs);
 
     fclose(devNull);
 }
@@ -225,7 +220,7 @@ void clogger_log(clogger* logger, string_t title, string_t frmt, ...)
     va_list args;
     va_start(args, frmt);
 
-    clogger_log_priv(logger, SEVERITY_UNDEFINED, title, frmt, args); 
+    clogger_log_priv(logger, SEVERITY_UNDEFINED, title, frmt, &args); 
 
     va_end(args);
 }
@@ -236,7 +231,7 @@ void clogger_info(clogger* logger, string_t frmt, ...)
     va_list args;
     va_start(args, frmt);
 
-    clogger_log_priv(logger, SEVERITY_INFO, logger->severities[SEVERITY_INFO], frmt, args); 
+    clogger_log_priv(logger, SEVERITY_INFO, logger->severities[SEVERITY_INFO], frmt, &args); 
 
     va_end(args);
 }
@@ -247,7 +242,7 @@ void clogger_warn(clogger* logger, string_t frmt, ...)
     va_list args;
     va_start(args, frmt);
 
-    clogger_log_priv(logger, SEVERITY_WARNING, logger->severities[SEVERITY_WARNING], frmt, args); 
+    clogger_log_priv(logger, SEVERITY_WARNING, logger->severities[SEVERITY_WARNING], frmt, &args); 
 
     va_end(args);
 }
@@ -258,7 +253,7 @@ void clogger_error(clogger* logger, string_t frmt, ...)
     va_list args;
     va_start(args, frmt);
 
-    clogger_log_priv(logger, SEVERITY_ERROR, logger->severities[SEVERITY_ERROR], frmt, args); 
+    clogger_log_priv(logger, SEVERITY_ERROR, logger->severities[SEVERITY_ERROR], frmt, &args); 
 
     va_end(args);
 }
@@ -269,7 +264,7 @@ void clogger_debug(clogger* logger, string_t frmt, ...)
     va_list args;
     va_start(args, frmt);
 
-    clogger_log_priv(logger, SEVERITY_DEBUG, logger->severities[SEVERITY_DEBUG], frmt, args); 
+    clogger_log_priv(logger, SEVERITY_DEBUG, logger->severities[SEVERITY_DEBUG], frmt, &args); 
 
     va_end(args);
 }

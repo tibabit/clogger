@@ -40,4 +40,10 @@ typedef struct _transport
     log_severity_t severity;
 }transport_t;
 
+typedef enum
+{
+    TRANSPORT_OPT_LOG_FORMATTER,
+    TRANSPORT_OPT_LOG_FORMAT
+}transport_option_t;
+
 #endif /* end of include guard: TRANSPORT_H */

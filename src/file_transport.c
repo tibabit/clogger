@@ -39,7 +39,6 @@ typedef struct _file_transport
     log_formatter_fn formatter;
     string_t log_format;
     FILE *stream;
-    bool_t log_catagory;    // whether to log logger catagory or not
     bool_t colorize;        // where to show colorful log (for console transport only)
 }file_transport_t;
 
@@ -95,10 +94,7 @@ void file_transport_destory(transport_t *transport)
 
     file_transport_t *file_transport = (file_transport_t *)transport;
 
-    if (file_transport->log_format != NULL)
-    {
-        free(file_transport->log_format);
-    }
+    FREE_IF_NOT_NULL(file_transport->log_format);
 
     if (file_transport->stream != NULL)
     {
@@ -129,11 +125,17 @@ int file_transport_setopt(file_transport_t *transport, transport_option_t option
     else if (TRANSPORT_OPT_LOG_FORMAT == option)
     {
         ASSERT(data != NULL, -1);
-        if (transport->log_format != NULL)
-        {
-            free(transport->log_format);
-        }
-        transport->log_format = strdup(data);
+        FREE_AND_COPY(transport->log_format, data);
+        return 0;
+    }
+    else if (TRANSPORT_OPT_SEVERITY == option)
+    {
+        transport->severity = (log_severity_t)data;
+        return 0;
+    }
+    else if (TRANSPORT_OPT_COLORIZE == option)
+    {
+        transport->colorize = data > 0;
         return 0;
     }
     return -1;

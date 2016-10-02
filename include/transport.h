@@ -43,7 +43,9 @@ typedef struct _transport
 typedef enum
 {
     TRANSPORT_OPT_LOG_FORMATTER,
-    TRANSPORT_OPT_LOG_FORMAT
+    TRANSPORT_OPT_LOG_FORMAT,
+    TRANSPORT_OPT_SEVERITY,
+    TRANSPORT_OPT_COLORIZE,
 }transport_option_t;
 
 #endif /* end of include guard: TRANSPORT_H */

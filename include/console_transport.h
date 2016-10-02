@@ -30,6 +30,8 @@
 
 typedef file_transport_t console_transport_t;
 
+#define console_transport_setopt file_transport_setopt
+
 console_transport_t * console_transport_new();
 
 #endif /* end of include guard: CONSOLE_TRANSPORT_H */

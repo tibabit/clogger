@@ -51,4 +51,17 @@ typedef unsigned char bool_t;
         return __VA_ARGS__; \
     }
 
+
+/**
+ * utility functions
+ */
+#define FREE_IF_NOT_NULL(ptr)   \
+    if (ptr)                    \
+    {                           \
+        free(ptr);              \
+    }
+#define FREE_AND_COPY(ptr, str) \
+    FREE_IF_NOT_NULL(ptr);      \
+    ptr = strdup(str);
+
 #endif /* end of include guard: INTERNALS_H */

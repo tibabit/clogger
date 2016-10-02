@@ -44,8 +44,10 @@ typedef enum
     SEVERITY_NOTICE,         /* normal but significant conditions */
     SEVERITY_INFO,           /* informational message */
     SEVERITY_DEBUG,          /* debug level message */
-    SEVERITY_UNDEFINED
+    SEVERITY_MAX
 }log_severity_t;
+
+#define SEVERITY_UNDEFINED SEVERITY_MAX
 
 /**
  * reprsents one log entry

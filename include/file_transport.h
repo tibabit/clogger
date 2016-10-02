@@ -33,6 +33,6 @@
 typedef struct _file_transport file_transport_t;
 
 file_transport_t * file_transport_new();
-int file_transport_setopt(file_transport_t *transport, transport_option_t option, void *data);
+int file_transport_setopt(file_transport_t *transport, transport_option_t option, unsigned long data);
 
 #endif /* end of include guard: FILE_TRANSPORT_H */

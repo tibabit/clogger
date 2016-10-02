@@ -26,9 +26,31 @@
 
 #define CONFIG_H
 
+/** colors */
+#define COLOR(ANSI_CODE)        ("\x1b[3"#ANSI_CODE"m")
+#define COLOR_GREEN             COLOR(2)
+#define COLOR_RED               COLOR(1)
+#define COLOR_BLUE              COLOR(4)
+#define COLOR_YELLOW            COLOR(3)
+#define COLOR_CYAN              COLOR(6)
+#define COLOR_WHITE             COLOR(7)
+
+#define COLOR_EMERGENCY         COLOR_RED
+#define COLOR_ALERT             COLOR_RED
+#define COLOR_CRITICAL          COLOR_RED
+#define COLOR_ERROR             COLOR_RED
+#define COLOR_WARNING           COLOR_YELLOW
+#define COLOR_NOTICE            COLOR_BLUE
+#define COLOR_INFO              COLOR_GREEN
+#define COLOR_DEBUG             COLOR_CYAN
+#define COLOR_NORMAL            COLOR_WHITE
+
 #define DEFAULT_LOG_SEVERITY            SEVERITY_INFO
 #define DEFAULT_LOG_FORMAT_FILE         "[%Y] %T: %M"
 #define DEFAULT_LOG_FORMAT_CONSOLE      "%T: %M"
+
+
+#define NEWLINE     "\n"
 
 #endif /* end of include guard: CONFIG_H */
 

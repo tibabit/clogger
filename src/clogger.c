@@ -39,16 +39,6 @@
 #include "log_entry.h"
 #include "console_transport.h"
 
-#define COLOR(ANSI_CODE)        ("\x1b[3"#ANSI_CODE"m")
-#define COLOR_GREEN             COLOR(2)
-#define COLOR_RED               COLOR(1)
-#define COLOR_BLUE              COLOR(4)
-#define COLOR_YELLOW            COLOR(3)
-#define COLOR_CYAN              COLOR(6)
-#define COLOR_WHITE             COLOR(7)
-
-#define NEWLINE     "\n"
-
 //! private funcions
 
 //! logging functions declarations

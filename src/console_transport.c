@@ -39,6 +39,7 @@ console_transport_t * console_transport_new()
 
     file_transport_set_stream(transport, stdout);
     console_transport_setopt(transport, TRANSPORT_OPT_LOG_FORMAT, DEFAULT_LOG_FORMAT_CONSOLE);
+    console_transport_setopt(transport, TRANSPORT_OPT_COLORIZE, TRUE);
 
     return transport;
 }

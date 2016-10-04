@@ -67,4 +67,12 @@ clogger* clogger_init(void);
 void clogger_destroy(clogger *logger);
 void clogger_add_transport(clogger *logger, transport_t* transport);
 
+//! logging functions declarations
+void clogger_log(clogger* logger, const string_t title, const string_t msg, ...);
+void clogger_info(clogger* logger, const string_t msg, ...);
+void clogger_warn(clogger* logger, const string_t msg, ...);
+void clogger_error(clogger* logger, const string_t msg, ...);
+void clogger_debug(clogger* logger, const string_t msg, ...);
+
+
 #endif /* CLOGGER_H_ */

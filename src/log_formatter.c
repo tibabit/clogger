@@ -28,28 +28,23 @@
 
 #include "log_formatter.h"
 #include "internals.h"
+#include "config.h"
 
 #define DATE_TIME_STR_SIZE 32
 
 #define NULL_TEXT           "(null)"
 #define IF_NULL(str, alt)   (((str) == NULL) ? (alt) : (str))
 
-string_t log_formatter_format(const string_t frmt, log_entry_t* entry)
+message_buffer_t* log_formatter_format(const string_t frmt, log_entry_t* entry)
 {
     ASSERT(frmt != NULL, NULL);
     ASSERT(entry != NULL, NULL);
 
-    // TODO handle timestamp
-    size_t expected_log_length = strlen(frmt) +
-        strlen(IF_NULL(entry->message, NULL_TEXT)) +
-        strlen(IF_NULL(entry->catagory, NULL_TEXT)) +
-        strlen(IF_NULL(entry->title, NULL_TEXT));
+    message_buffer_t* buf = message_buffer_new(0);
 
-    string_t formatted_log = calloc(1, expected_log_length);
-    ENSURE(formatted_log != NULL, NULL);
+    ENSURE(buf != NULL, NULL);
 
     string_t src = frmt;
-    string_t dst = formatted_log;
     size_t len = 0;
 
     while (*src != '\0')
@@ -64,27 +59,44 @@ string_t log_formatter_format(const string_t frmt, log_entry_t* entry)
                 }
                 switch(*src)
                 {
+                    case FORMAT_TIME:
+                        {
+                            char datetime[DATE_TIME_STR_SIZE] = {0};
+                            len = strftime(datetime, DATE_TIME_STR_SIZE, "%FT%TZ", gmtime(&entry->timestamp));
+                            message_buffer_append(buf,
+                                    datetime,
+                                    len);
+                        }
+                        break;
                     case FORMAT_TITLE:
-                        len = sprintf(dst, "%s", IF_NULL(entry->title, NULL_TEXT));
+                        message_buffer_append(buf,
+                                IF_NULL(entry->title, NULL_TEXT),
+                                strlen(IF_NULL(entry->title, NULL_TEXT)));
                         break;
                     case FORMAT_CATAGORY:
-                        len = sprintf(dst, "%s", IF_NULL(entry->catagory, NULL_TEXT));
+                        message_buffer_append(buf,
+                                IF_NULL(entry->catagory, NULL_TEXT),
+                                strlen(IF_NULL(entry->catagory, NULL_TEXT)));
                         break;
                     case FORMAT_MESSAGE:
-                        len = sprintf(dst, "%s", IF_NULL(entry->message, NULL_TEXT));
+                        message_buffer_append(buf,
+                                IF_NULL(entry->message, NULL_TEXT),
+                                strlen(IF_NULL(entry->message, NULL_TEXT)));
+                        break;
+                    case FORMAT_NEWLINE:
+                        message_buffer_append(buf,
+                                NEWLINE,
+                                strlen(NEWLINE));
                         break;
                     default:
-                        len = 0;
                         break;
                 }
-                dst += len;
                 break;
             default:
-                *dst = *src;
-                dst++;
+                message_buffer_append(buf, src, 1);
         }
         src++;
     }
 
-    return formatted_log;
+    return buf;
 }

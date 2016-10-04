@@ -28,15 +28,17 @@
 
 #include "internals.h"
 #include "log_entry.h"
+#include "message_buffer.h"
 
-#define FORMAT_TIME         'Y'
-#define FORMAT_TITLE        'T'
-#define FORMAT_CATAGORY     'C'
-#define FORMAT_MESSAGE      'M'
+#define FORMAT_TIME         'y'
+#define FORMAT_TITLE        't'
+#define FORMAT_CATAGORY     'c'
+#define FORMAT_MESSAGE      'm'
+#define FORMAT_NEWLINE      'n'
 
-typedef string_t (*log_formatter_fn)(const string_t frmt, log_entry_t* entry);
+typedef message_buffer_t* (*log_formatter_fn)(const string_t frmt, log_entry_t* entry);
 
-string_t log_formatter_format(const string_t frmt, log_entry_t* entry);
+message_buffer_t* log_formatter_format(const string_t frmt, log_entry_t* entry);
 
 #endif /* end of include guard: LOG_FORMATTER_H */
 

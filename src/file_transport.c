@@ -45,7 +45,9 @@ typedef struct _file_transport
 
     /* stream related */
     FILE *stream;
+    string_t filename;
     bool_t is_console;      // true of transport type is console
+    bool_t append;          // append or create new every time
 }file_transport_t;
 
 #include <stdlib.h>
@@ -63,7 +65,7 @@ void file_transport_destory(transport_t *transport);
 
 void file_transport_set_stream(file_transport_t *transport, FILE *stream);
 
-file_transport_t * file_transport_new()
+file_transport_t * file_transport_new(string_t filename)
 {
     file_transport_t *transport = calloc(1, sizeof(file_transport_t));
 
@@ -72,7 +74,7 @@ file_transport_t * file_transport_new()
     transport->write = file_transport_write;
     transport->destroy = file_transport_destory;
     transport->severity = DEFAULT_LOG_SEVERITY;
-
+    transport->append = TRUE;
 
     // initialize colors
     FREE_AND_COPY(transport->color_normal, COLOR_NORMAL);
@@ -85,10 +87,24 @@ file_transport_t * file_transport_new()
     FREE_AND_COPY(transport->colors[SEVERITY_INFO], COLOR_INFO);
     FREE_AND_COPY(transport->colors[SEVERITY_DEBUG], COLOR_DEBUG);
 
-    file_transport_setopt(transport, TRANSPORT_OPT_LOG_FORMATTER, log_formatter_format);
-    file_transport_setopt(transport, TRANSPORT_OPT_LOG_FORMAT, DEFAULT_LOG_FORMAT_FILE);
+    file_transport_setopt(transport, TRANSPORT_OPT_LOG_FORMATTER, (unsigned long)log_formatter_format);
+    file_transport_setopt(transport, TRANSPORT_OPT_LOG_FORMAT, (unsigned long)DEFAULT_LOG_FORMAT_FILE);
 
+    if (filename != NULL)
+    {
+        // open file for writing log
+        transport->stream = fopen(filename, transport->append ? "a" : "w");
+        if (transport->stream == NULL)
+        {
+            goto error;
+        }
+        transport->filename = strdup(filename);
+    }
     return transport;
+
+error:
+    file_transport_destory((transport_t*)transport);
+    return NULL;
 }
 
 void file_transport_write(transport_t *transport, log_entry_t *entry)
@@ -98,21 +114,21 @@ void file_transport_write(transport_t *transport, log_entry_t *entry)
 
     file_transport_t *file_transport = (file_transport_t *)transport;
 
-    string_t formatted_log = file_transport->formatter(file_transport->log_format, entry);
-    ENSURE(formatted_log != NULL);
+    message_buffer_t* buf = file_transport->formatter(file_transport->log_format, entry);
+    ENSURE(buf != NULL);
 
     if (file_transport->colorize && file_transport->is_console)
     {
-        fprintf(file_transport->stream, "%s%s%s"NEWLINE, file_transport->colors[entry->severity],
-                formatted_log,
+        fprintf(file_transport->stream, "%s%s%s", file_transport->colors[entry->severity],
+                message_buffer_get_data(buf),
                 file_transport->color_normal);
     }
     else
     {
-        fprintf(file_transport->stream, "%s\n", formatted_log);
+        fprintf(file_transport->stream, "%s", message_buffer_get_data(buf));
     }
 
-    free(formatted_log);
+    message_buffer_destroy(buf);
 }
 
 void file_transport_destory(transport_t *transport)
@@ -129,11 +145,11 @@ void file_transport_destory(transport_t *transport)
     {
         FREE_IF_NOT_NULL(file_transport->colors[i]);
     }
-
     if (file_transport->stream != NULL)
     {
         fclose(file_transport->stream);
     }
+    FREE_IF_NOT_NULL(file_transport->filename);
 
     free(transport);
 

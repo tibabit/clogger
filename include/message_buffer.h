@@ -22,24 +22,20 @@
  * SOFTWARE.
  */
 
-#include "console_transport.h"
+#ifndef MESSAGE_BUFFER_H
 
-#include <stdlib.h>
+#define MESSAGE_BUFFER_H
+
+#include <stdio.h>
 
 #include "internals.h"
-#include "config.h"
 
-void file_transport_set_stream(file_transport_t *transport, FILE *stream);
+typedef struct _message_buffer_t message_buffer_t;
 
-console_transport_t * console_transport_new()
-{
-    console_transport_t *transport = file_transport_new(NULL);
+message_buffer_t * message_buffer_new(size_t capacity);
+void message_buffer_destroy(message_buffer_t *buffer);
+int message_buffer_append(message_buffer_t *buffer, string_t data, size_t size);
+size_t message_buffer_get_length(message_buffer_t *buffer);
+string_t message_buffer_get_data(message_buffer_t *buffer);
 
-    ENSURE(transport != NULL, NULL);
-
-    file_transport_set_stream(transport, stdout);
-    console_transport_setopt(transport, TRANSPORT_OPT_LOG_FORMAT, (unsigned long)DEFAULT_LOG_FORMAT_CONSOLE);
-    console_transport_setopt(transport, TRANSPORT_OPT_COLORIZE, TRUE);
-
-    return transport;
-}
+#endif /* end of include guard: MESSAGE_BUFFER_H */

@@ -23,15 +23,38 @@
  */
 
 #include "clogger.h"
+#include "file_transport.h"
 
-int main()
+void test_console_transport()
 {
     clogger* logger = clogger_init();
 
-    logger->info(logger, "Info type log %s", "arg 1");
-    logger->warn(logger, "Warning type log");
-    logger->error(logger, "Error type log");
-    logger->debug(logger, "Debug type log");
+    clogger_info(logger, "Info type log %s", "arg 1");
+    clogger_warn(logger, "Warning type log");
+    clogger_error(logger, "Error type log");
+    clogger_debug(logger, "Debug type log");
 
     clogger_destroy(logger);
+}
+
+void test_file_transport()
+{
+    clogger* logger = clogger_init();
+
+    file_transport_t *file_transport = file_transport_new("/tmp/test.log");
+
+    clogger_add_transport(logger, (transport_t*)file_transport);
+
+    clogger_info(logger, "Info type log %s", "arg 1");
+    clogger_warn(logger, "Warning type log");
+    clogger_error(logger, "Error type log");
+    clogger_debug(logger, "Debug type log");
+
+    clogger_destroy(logger);
+}
+
+int main()
+{
+    test_console_transport();
+    test_file_transport();
 }

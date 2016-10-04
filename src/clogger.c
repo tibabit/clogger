@@ -41,12 +41,6 @@
 
 //! private funcions
 
-//! logging functions declarations
-void clogger_log(clogger* logger, const string_t title, const string_t msg, ...);
-void clogger_info(clogger* logger, const string_t msg, ...);
-void clogger_warn(clogger* logger, const string_t msg, ...);
-void clogger_error(clogger* logger, const string_t msg, ...);
-void clogger_debug(clogger* logger, const string_t msg, ...);
 
 void clogger_log_priv(clogger* logger,
         log_severity_t severity,

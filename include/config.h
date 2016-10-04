@@ -46,8 +46,8 @@
 #define COLOR_NORMAL            COLOR_WHITE
 
 #define DEFAULT_LOG_SEVERITY            SEVERITY_INFO
-#define DEFAULT_LOG_FORMAT_FILE         "[%Y] %T: %M"
-#define DEFAULT_LOG_FORMAT_CONSOLE      "%T: %M"
+#define DEFAULT_LOG_FORMAT_FILE         "%y - %t: %m%n"
+#define DEFAULT_LOG_FORMAT_CONSOLE      "%t: %m%n"
 
 
 #define NEWLINE     "\n"

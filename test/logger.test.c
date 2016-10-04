@@ -24,10 +24,14 @@
 
 #include "clogger.h"
 #include "file_transport.h"
+#include "console_transport.h"
 
 void test_console_transport()
 {
     clogger* logger = clogger_init();
+    // add default transports
+    console_transport_t * console_transport = console_transport_new();
+    clogger_add_transport(logger, (transport_t *)console_transport);
 
     clogger_info(logger, "Info type log %s", "arg 1");
     clogger_warn(logger, "Warning type log");

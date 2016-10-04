@@ -64,9 +64,6 @@ clogger* clogger_init(void)
     logger->error = clogger_error;
     logger->debug = clogger_debug;
 
-    // add default transports
-    console_transport_t * console_transport = console_transport_new();
-    clogger_add_transport(logger, (transport_t *)console_transport);
     // add log formaatter
 
     // add severity levels

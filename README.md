@@ -2,7 +2,7 @@
 
 ### logging library for c/c++
 
-[![Build Status](https://travis-ci.org/tibabit/clogger.svg?branch=master)](https://travis-ci.org/tibabit/clogger)
+[![Build Status](https://travis-ci.org/tibabit/clogger.svg?branch=master)](https://travis-ci.org/tibabit/clogger) ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 
 ### Features
  - Colorful logging on terminal

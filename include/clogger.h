@@ -68,11 +68,17 @@ void clogger_destroy(clogger *logger);
 void clogger_add_transport(clogger *logger, transport_t* transport);
 
 //! logging functions declarations
-void clogger_log(clogger* logger, const string_t title, const string_t msg, ...);
-void clogger_info(clogger* logger, const string_t msg, ...);
-void clogger_warn(clogger* logger, const string_t msg, ...);
-void clogger_error(clogger* logger, const string_t msg, ...);
-void clogger_debug(clogger* logger, const string_t msg, ...);
+void clogger_log    ( clogger* logger, const string_t title, const string_t frmt, ...);
+void clogger_emerg  ( clogger* logger, const string_t frmt, ...);
+void clogger_alert  ( clogger* logger, const string_t frmt, ...);
+void clogger_crit   ( clogger* logger, const string_t frmt, ...);
+void clogger_error  ( clogger* logger, const string_t frmt, ...);
+void clogger_warn   ( clogger* logger, const string_t frmt, ...);
+void clogger_notice ( clogger* logger, const string_t frmt, ...);
+void clogger_info   ( clogger* logger, const string_t frmt, ...);
+void clogger_debug  ( clogger* logger, const string_t frmt, ...);
 
+// default logger
+clogger* clogger_default(void);
 
 #endif /* CLOGGER_H_ */

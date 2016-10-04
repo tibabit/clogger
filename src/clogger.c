@@ -39,8 +39,10 @@
 #include "log_entry.h"
 #include "console_transport.h"
 
-//! private funcions
+// to be only used as default logger
+clogger* default_logger;
 
+//! private funcions
 
 void clogger_log_priv(clogger* logger,
         log_severity_t severity,
@@ -81,6 +83,17 @@ clogger* clogger_init(void)
 
 
     return logger;
+}
+
+clogger* clogger_default(void)
+{
+    default_logger = clogger_init();
+
+    ENSURE(default_logger != NULL, NULL);
+
+    // add default transports
+    console_transport_t * console_transport = console_transport_new();
+    clogger_add_transport(default_logger, (transport_t *)console_transport);
 }
 
 void clogger_destroy(clogger *logger)
@@ -246,6 +259,45 @@ void clogger_debug(clogger* logger, string_t frmt, ...)
     va_start(args, frmt);
 
     clogger_log_priv(logger, SEVERITY_DEBUG, logger->severities[SEVERITY_DEBUG], frmt, &args); 
+
+    va_end(args);
+}
+void clogger_emerg(clogger* logger, const string_t frmt, ...)
+{
+    va_list args;
+    va_start(args, frmt);
+
+    clogger_log_priv(logger, SEVERITY_EMERGENCY, logger->severities[SEVERITY_EMERGENCY], frmt, &args); 
+
+    va_end(args);
+}
+
+void clogger_alert(clogger* logger, const string_t frmt, ...)
+{
+    va_list args;
+    va_start(args, frmt);
+
+    clogger_log_priv(logger, SEVERITY_ALERT, logger->severities[SEVERITY_ALERT], frmt, &args); 
+
+    va_end(args);
+}
+
+void clogger_crit(clogger* logger, const string_t frmt, ...)
+{
+    va_list args;
+    va_start(args, frmt);
+
+    clogger_log_priv(logger, SEVERITY_CRITICAL, logger->severities[SEVERITY_CRITICAL], frmt, &args); 
+
+    va_end(args);
+}
+
+void clogger_notice(clogger* logger, const string_t frmt, ...)
+{
+    va_list args;
+    va_start(args, frmt);
+
+    clogger_log_priv(logger, SEVERITY_NOTICE, logger->severities[SEVERITY_NOTICE], frmt, &args); 
 
     va_end(args);
 }

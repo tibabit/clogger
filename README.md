@@ -23,7 +23,7 @@ cmake .. && make
 ```
 
 * [Logging](#logging)
- * [Using default logger](#default-logger)
+ * [Using default logger](#using-default-logger)
  * [Console transport](#console-transport)
  * [File transport](#file-transport)
 

@@ -99,3 +99,5 @@ int main()
  - unit tests
  - documentation
  - default logger
+ - more examples
+ - more customization

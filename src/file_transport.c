@@ -62,6 +62,7 @@ typedef struct _file_transport
  */
 void file_transport_write(transport_t *transport, log_entry_t *entry);
 void file_transport_destory(transport_t *transport);
+size_t file_transport_write_string(FILE* stream, string_t str);
 
 void file_transport_set_stream(file_transport_t *transport, FILE *stream);
 
@@ -119,16 +120,23 @@ void file_transport_write(transport_t *transport, log_entry_t *entry)
 
     if (file_transport->colorize && file_transport->is_console)
     {
-        fprintf(file_transport->stream, "%s%s%s", file_transport->colors[entry->severity],
-                message_buffer_get_data(buf),
-                file_transport->color_normal);
+        file_transport_write_string(file_transport->stream, file_transport->colors[entry->severity]);
+        file_transport_write_string(file_transport->stream, message_buffer_get_data(buf));
+        file_transport_write_string(file_transport->stream, file_transport->color_normal);
     }
     else
     {
-        fprintf(file_transport->stream, "%s", message_buffer_get_data(buf));
+        file_transport_write_string(file_transport->stream, message_buffer_get_data(buf));
     }
 
     message_buffer_destroy(buf);
+}
+size_t file_transport_write_string(FILE* stream, string_t str)
+{
+    ASSERT(stream != NULL, 0);
+    ASSERT(str != NULL, 0);
+
+    fwrite(str, 1, strlen(str), stream);
 }
 
 void file_transport_destory(transport_t *transport)

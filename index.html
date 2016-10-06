@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>Clogger by tibabit</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <h1>Clogger</h1>
+        <h2>logging library for C</h2>
+        <a href="https://github.com/tibabit/clogger" class="button"><small>View project on</small> GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h1>
+<a id="clogger" class="anchor" href="#clogger" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>clogger</h1>
+
+<h3>
+<a id="logging-library-for-cc" class="anchor" href="#logging-library-for-cc" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>logging library for c/c++</h3>
+
+<p><a href="https://travis-ci.org/tibabit/clogger"><img src="https://travis-ci.org/tibabit/clogger.svg?branch=master" alt="Build Status"></a> <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License"></p>
+
+<h3>
+<a id="features" class="anchor" href="#features" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Features</h3>
+
+<ul>
+<li>File and console transports</li>
+<li>Colorful logging on terminal</li>
+<li>Supports multiple level of logging</li>
+<li>Supports <code>printf</code> formatted log message</li>
+<li>Easily customizable</li>
+</ul>
+
+<h3>
+<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installation</h3>
+
+<ul>
+<li>clone the repository <a href="https://github.com/tibabit/clogger.git">https://github.com/tibabit/clogger.git</a>
+</li>
+<li>Install cmake version &gt;= 2.6</li>
+<li><code>cd /path/to/repository</code></li>
+<li><code>mkdir bin</code></li>
+<li><code>cd bin</code></li>
+<li><code>cmake .. &amp;&amp; make</code></li>
+</ul>
+
+<h3>
+<a id="examples" class="anchor" href="#examples" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Examples</h3>
+
+<ul>
+<li>Console transport</li>
+</ul>
+
+<div class="highlight highlight-source-c"><pre>#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">"</span>clogger.h<span class="pl-pds">"</span></span>
+
+<span class="pl-k">int</span> <span class="pl-en">main</span>()
+{
+    <span class="pl-c">// initialize/create logger</span>
+    clogger* logger = <span class="pl-c1">clogger_init</span>();
+    <span class="pl-c">// create a console transport</span>
+    <span class="pl-c1">console_transport_t</span> * console_transport = <span class="pl-c1">console_transport_new</span>();
+    <span class="pl-c">// set log level</span>
+    <span class="pl-c1">console_transport_setopt</span>(console_transport, TRANSPORT_OPT_SEVERITY, SEVERITY_DEBUG);
+    <span class="pl-c">// add transport to logger</span>
+    <span class="pl-c1">clogger_add_transport</span>(logger, (<span class="pl-c1">transport_t</span> *)console_transport);
+
+    <span class="pl-c1">clogger_emerg</span>(logger, <span class="pl-s"><span class="pl-pds">"</span>Emergency type log <span class="pl-c1">%s</span><span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>arg 1<span class="pl-pds">"</span></span>);
+    <span class="pl-c1">clogger_alert</span>(logger, <span class="pl-s"><span class="pl-pds">"</span>Alert type log<span class="pl-pds">"</span></span>);
+    <span class="pl-c1">clogger_crit</span>(logger, <span class="pl-s"><span class="pl-pds">"</span>Ciritcal type log<span class="pl-pds">"</span></span>);
+    <span class="pl-c1">clogger_notice</span>(logger, <span class="pl-s"><span class="pl-pds">"</span>Notice type log<span class="pl-pds">"</span></span>);
+    <span class="pl-c1">clogger_info</span>(logger, <span class="pl-s"><span class="pl-pds">"</span>Info type log <span class="pl-c1">%s</span><span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>arg 1<span class="pl-pds">"</span></span>);
+    <span class="pl-c1">clogger_warn</span>(logger, <span class="pl-s"><span class="pl-pds">"</span>Warning type log<span class="pl-pds">"</span></span>);
+    <span class="pl-c1">clogger_error</span>(logger, <span class="pl-s"><span class="pl-pds">"</span>Error type log<span class="pl-pds">"</span></span>);
+    <span class="pl-c1">clogger_debug</span>(logger, <span class="pl-s"><span class="pl-pds">"</span>Debug type log<span class="pl-pds">"</span></span>);
+
+    <span class="pl-c1">clogger_destroy</span>(logger);
+}
+
+<span class="pl-c">// Output</span>
+emerg: Emergency type log arg <span class="pl-c1">1</span>
+alert: Alert type log
+crit: Ciritcal type log
+notice: Notice type log
+info: Info type log arg <span class="pl-c1">1</span>
+warn: Warning type log
+error: Error type log
+debug: Debug type log</pre></div>
+
+<ul>
+<li>
+<p>File Transport</p>
+
+<div class="highlight highlight-source-c"><pre>#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">"</span>clogger.h<span class="pl-pds">"</span></span>
+
+<span class="pl-k">int</span> <span class="pl-en">main</span>()
+{
+  clogger* logger = <span class="pl-c1">clogger_init</span>();
+
+  <span class="pl-c1">file_transport_t</span> *file_transport = <span class="pl-c1">file_transport_new</span>(<span class="pl-s"><span class="pl-pds">"</span>test.log<span class="pl-pds">"</span></span>);
+
+  <span class="pl-c1">clogger_add_transport</span>(logger, (<span class="pl-c1">transport_t</span>*)file_transport);
+
+  <span class="pl-c1">clogger_emerg</span>(logger, <span class="pl-s"><span class="pl-pds">"</span>Emergency type log <span class="pl-c1">%s</span><span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>arg 1<span class="pl-pds">"</span></span>);
+  <span class="pl-c1">clogger_alert</span>(logger, <span class="pl-s"><span class="pl-pds">"</span>Alert type log<span class="pl-pds">"</span></span>);
+  <span class="pl-c1">clogger_crit</span>(logger, <span class="pl-s"><span class="pl-pds">"</span>Ciritcal type log<span class="pl-pds">"</span></span>);
+  <span class="pl-c1">clogger_notice</span>(logger, <span class="pl-s"><span class="pl-pds">"</span>Notice type log<span class="pl-pds">"</span></span>);
+  <span class="pl-c1">clogger_info</span>(logger, <span class="pl-s"><span class="pl-pds">"</span>Info type log <span class="pl-c1">%s</span><span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>arg 1<span class="pl-pds">"</span></span>);
+  <span class="pl-c1">clogger_warn</span>(logger, <span class="pl-s"><span class="pl-pds">"</span>Warning type log<span class="pl-pds">"</span></span>);
+  <span class="pl-c1">clogger_error</span>(logger, <span class="pl-s"><span class="pl-pds">"</span>Error type log<span class="pl-pds">"</span></span>);
+  <span class="pl-c1">clogger_debug</span>(logger, <span class="pl-s"><span class="pl-pds">"</span>Debug type log<span class="pl-pds">"</span></span>);
+
+  <span class="pl-c1">clogger_destroy</span>(logger);
+}
+
+<span class="pl-c">// output</span>
+<span class="pl-c1">2016</span>-<span class="pl-c1">10</span>-06T16:<span class="pl-c1">38</span>:50Z - emerg: Emergency type log arg <span class="pl-c1">1</span>
+<span class="pl-c1">2016</span>-<span class="pl-c1">10</span>-06T16:<span class="pl-c1">38</span>:50Z - alert: Alert type log
+<span class="pl-c1">2016</span>-<span class="pl-c1">10</span>-06T16:<span class="pl-c1">38</span>:50Z - crit: Ciritcal type log
+<span class="pl-c1">2016</span>-<span class="pl-c1">10</span>-06T16:<span class="pl-c1">38</span>:50Z - notice: Notice type log
+<span class="pl-c1">2016</span>-<span class="pl-c1">10</span>-06T16:<span class="pl-c1">38</span>:50Z - info: Info type log arg <span class="pl-c1">1</span>
+<span class="pl-c1">2016</span>-<span class="pl-c1">10</span>-06T16:<span class="pl-c1">38</span>:50Z - warn: Warning type log
+<span class="pl-c1">2016</span>-<span class="pl-c1">10</span>-06T16:<span class="pl-c1">38</span>:50Z - error: Error type log</pre></div>
+</li>
+</ul>
+
+<h3>
+<a id="todos" class="anchor" href="#todos" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>TODOs</h3>
+
+<ul>
+<li>configuration using config file</li>
+<li>file rotation</li>
+<li>unit tests</li>
+<li>documentation</li>
+<li>default logger</li>
+<li>more examples</li>
+<li>more customization</li>
+</ul>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/tibabit/clogger/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/tibabit/clogger/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/tibabit/clogger"></a> is maintained by <a href="https://github.com/tibabit">tibabit</a>.</p>
+
+          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
+    </div>
+
+  
+  </body>
+</html>

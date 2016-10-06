@@ -4,24 +4,28 @@
 
 [![Build Status](https://travis-ci.org/tibabit/clogger.svg?branch=master)](https://travis-ci.org/tibabit/clogger) ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 
-### Features
+## Features
  - File and console transports
  - Colorful logging on terminal
  - Supports multiple level of logging
  - Supports `printf` formatted log message
  - Easily customizable
 
-### Installation
+## Installation
  - clone the repository https://github.com/tibabit/clogger.git
  - Install cmake version >= 2.6
- - `cd /path/to/repository`
- - `mkdir bin`
- - `cd bin`
- - `cmake .. && make`
+```bash
+cd /path/to/repository
+mkdir bin
+cd bin
+cmake .. && make
+```
 
-### Examples
+* [Logging](#logging)
+ * [Console transport](#console-transport)
+ * [File transport](#file-transport)
 
- - Console transport
+### Console transport
 ```C
 #include "clogger.h"
 
@@ -59,7 +63,7 @@ error: Error type log
 debug: Debug type log
 ```
 
- - File Transport
+### File Transport
 ```C
 #include "clogger.h"
 
@@ -93,7 +97,7 @@ int main()
 2016-10-06T16:38:50Z - error: Error type log
 ```
 
-### TODOs
+## TODOs
  - configuration using config file
  - file rotation
  - unit tests

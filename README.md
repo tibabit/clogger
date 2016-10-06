@@ -25,7 +25,7 @@ cmake .. && make
  * [Console transport](#console-transport)
  * [File transport](#file-transport)
 
- - **Console transport**
+### Console transport
 ```C
 #include "clogger.h"
 
@@ -63,8 +63,8 @@ error: Error type log
 debug: Debug type log
 ```
 
- - **File Transport**
- ```C
+### File Transport
+```C
 #include "clogger.h"
 
 int main()
@@ -95,7 +95,7 @@ int main()
 2016-10-06T16:38:50Z - info: Info type log arg 1
 2016-10-06T16:38:50Z - warn: Warning type log
 2016-10-06T16:38:50Z - error: Error type log
- ```
+```
 
 ## TODOs
  - configuration using config file

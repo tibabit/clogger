@@ -6,6 +6,7 @@
 
 ## Features
  - File and console transports
+ - Add multiple transport of same type
  - Colorful logging on terminal
  - Supports multiple level of logging
  - Supports `printf` formatted log message
@@ -22,8 +23,41 @@ cmake .. && make
 ```
 
 * [Logging](#logging)
+ * [Using default logger](#default-logger)
  * [Console transport](#console-transport)
  * [File transport](#file-transport)
+
+### Logging
+There are two ways to use logger, one is to use default logger, which prints nice log messages onn the terminal, another
+is to instantiate your own logger and add transports to it
+
+### Using default logger
+```C
+#include "clogger.h"
+
+int main()
+{
+    clogger_emergd("Emergency type log %s", "arg 1");
+    clogger_alertd("Alert type log");
+    clogger_critd("Ciritcal type log");
+    clogger_noticed("Notice type log");
+    clogger_infod("Info type log %s", "arg 1");
+    clogger_warnd("Warning type log");
+    clogger_errord("Error type log");
+    clogger_debugd("Debug type log");
+
+    return 0;
+}
+
+// output
+emerg: Emergency type log arg 1
+alert: Alert type log
+crit: Ciritcal type log
+notice: Notice type log
+info: Info type log arg 1
+warn: Warning type log
+error: Error type log
+```
 
 ### Console transport
 ```C

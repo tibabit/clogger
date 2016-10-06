@@ -22,8 +22,4 @@ add_library(clogger STATIC ${CLOGGER_SOURCES})
 # ----------------------------------------
 # clogger tests
 # ----------------------------------------
-file(GLOB_RECURSE CLOGGERR_TEST_SOURCES
-    ${CMAKE_SOURCE_DIR}/test/*.c)
-
-add_executable(clogger_test ${CLOGGERR_TEST_SOURCES})
-target_link_libraries (clogger_test clogger)
+add_subdirectory(test)

@@ -23,8 +23,6 @@
  */
 
 #include "clogger.h"
-#include "file_transport.h"
-#include "console_transport.h"
 
 void test_console_transport()
 {
@@ -46,28 +44,7 @@ void test_console_transport()
     clogger_destroy(logger);
 }
 
-void test_file_transport()
-{
-    clogger* logger = clogger_init();
-
-    file_transport_t *file_transport = file_transport_new("/tmp/test.log");
-
-    clogger_add_transport(logger, (transport_t*)file_transport);
-
-    clogger_emerg(logger, "Emergency type log %s", "arg 1");
-    clogger_alert(logger, "Alert type log");
-    clogger_crit(logger, "Ciritcal type log");
-    clogger_notice(logger, "Notice type log");
-    clogger_info(logger, "Info type log %s", "arg 1");
-    clogger_warn(logger, "Warning type log");
-    clogger_error(logger, "Error type log");
-    clogger_debug(logger, "Debug type log");
-
-    clogger_destroy(logger);
-}
-
 int main()
 {
     test_console_transport();
-    test_file_transport();
 }

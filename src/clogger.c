@@ -51,6 +51,7 @@ void clogger_log_priv(clogger* logger,
         va_list* vargs);
 void clogger_add_severity(clogger *logger, log_severity_t severity, const string_t title);
 void clogger_prepare_log_message(string_t *message, string_t frmt, va_list* vargs);
+clogger* clogger_default(void);
 
 //! logger initializer
 
@@ -87,6 +88,10 @@ clogger* clogger_init(void)
 
 clogger* clogger_default(void)
 {
+    if (default_logger != NULL)
+    {
+        return default_logger;
+    }
     default_logger = clogger_init();
 
     ENSURE(default_logger != NULL, NULL);
@@ -94,6 +99,8 @@ clogger* clogger_default(void)
     // add default transports
     console_transport_t * console_transport = console_transport_new();
     clogger_add_transport(default_logger, (transport_t *)console_transport);
+
+    return default_logger;
 }
 
 void clogger_destroy(clogger *logger)
@@ -294,6 +301,117 @@ void clogger_crit(clogger* logger, const string_t frmt, ...)
 
 void clogger_notice(clogger* logger, const string_t frmt, ...)
 {
+    va_list args;
+    va_start(args, frmt);
+
+    clogger_log_priv(logger, SEVERITY_NOTICE, logger->severities[SEVERITY_NOTICE], frmt, &args); 
+
+    va_end(args);
+}
+
+//==============================================================================
+// Default logging
+//==============================================================================
+void clogger_logd(string_t title, string_t frmt, ...)
+{
+    clogger* logger = clogger_default();
+    ASSERT(logger != NULL);
+
+    va_list args;
+    va_start(args, frmt);
+
+    clogger_log_priv(logger, SEVERITY_UNDEFINED, title, frmt, &args); 
+
+    va_end(args);
+}
+
+void clogger_infod(string_t frmt, ...)
+{
+    clogger* logger = clogger_default();
+    ASSERT(logger != NULL);
+    va_list args;
+    va_start(args, frmt);
+
+    clogger_log_priv(logger, SEVERITY_INFO, logger->severities[SEVERITY_INFO], frmt, &args); 
+
+    va_end(args);
+}
+
+void clogger_warnd(string_t frmt, ...)
+{
+    clogger* logger = clogger_default();
+    ASSERT(logger != NULL);
+    va_list args;
+    va_start(args, frmt);
+
+    clogger_log_priv(logger, SEVERITY_WARNING, logger->severities[SEVERITY_WARNING], frmt, &args); 
+
+    va_end(args);
+}
+
+void clogger_errord(string_t frmt, ...)
+{
+    clogger* logger = clogger_default();
+    ASSERT(logger != NULL);
+    va_list args;
+    va_start(args, frmt);
+
+    clogger_log_priv(logger, SEVERITY_ERROR, logger->severities[SEVERITY_ERROR], frmt, &args); 
+
+    va_end(args);
+}
+
+void clogger_debugd(string_t frmt, ...)
+{
+    clogger* logger = clogger_default();
+    ASSERT(logger != NULL);
+    va_list args;
+    va_start(args, frmt);
+
+    clogger_log_priv(logger, SEVERITY_DEBUG, logger->severities[SEVERITY_DEBUG], frmt, &args); 
+
+    va_end(args);
+}
+void clogger_emergd(string_t frmt, ...)
+{
+    clogger* logger = clogger_default();
+    ASSERT(logger != NULL);
+    va_list args;
+    va_start(args, frmt);
+
+    clogger_log_priv(logger, SEVERITY_EMERGENCY, logger->severities[SEVERITY_EMERGENCY], frmt, &args); 
+
+    va_end(args);
+}
+
+void clogger_alertd(string_t frmt, ...)
+{
+    clogger* logger = clogger_default();
+    ASSERT(logger != NULL);
+    va_list args;
+    va_start(args, frmt);
+
+    clogger_log_priv(logger, SEVERITY_ALERT, logger->severities[SEVERITY_ALERT], frmt, &args); 
+
+    va_end(args);
+}
+
+void clogger_critd(string_t frmt, ...)
+{
+    clogger* logger = clogger_default();
+    ASSERT(logger != NULL);
+    va_list args;
+    va_start(args, frmt);
+
+    clogger_log_priv(logger, SEVERITY_CRITICAL, logger->severities[SEVERITY_CRITICAL], frmt, &args); 
+
+    va_end(args);
+}
+
+void clogger_noticed(string_t frmt, ...)
+{
+    clogger* logger = clogger_default();
+    ASSERT(logger != NULL);
     va_list args;
     va_start(args, frmt);
 

@@ -37,6 +37,8 @@
 #include "internals.h"
 #include "transport.h"
 #include "log_filter.h"
+#include "console_transport.h"
+#include "file_transport.h"
 
 typedef struct _clogger clogger;
 
@@ -79,6 +81,14 @@ void clogger_info   ( clogger* logger, const string_t frmt, ...);
 void clogger_debug  ( clogger* logger, const string_t frmt, ...);
 
 // default logger
-clogger* clogger_default(void);
+void clogger_logd    ( const string_t title, const string_t frmt, ...);
+void clogger_emergd  ( const string_t frmt, ...);
+void clogger_alertd  ( const string_t frmt, ...);
+void clogger_critd   ( const string_t frmt, ...);
+void clogger_errord  ( const string_t frmt, ...);
+void clogger_warnd   ( const string_t frmt, ...);
+void clogger_noticed ( const string_t frmt, ...);
+void clogger_infod   ( const string_t frmt, ...);
+void clogger_debugd  ( const string_t frmt, ...);
 
 #endif /* CLOGGER_H_ */

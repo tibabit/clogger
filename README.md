@@ -14,12 +14,16 @@
 ## Installation
  - clone the repository https://github.com/tibabit/clogger.git
  - Install cmake version >= 2.6
- - `cd /path/to/repository`
- - `mkdir bin`
- - `cd bin`
- - `cmake .. && make`
+```bash
+cd /path/to/repository
+mkdir bin
+cd bin
+cmake .. && make
+```
 
-## Examples
+* [Logging](#logging)
+ * [Console transport](#console-transport)
+ * [File transport](#file-transport)
 
  - **Console transport**
 ```C

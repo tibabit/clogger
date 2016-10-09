@@ -1,5 +1,8 @@
 sudo: false
 language: c
+compiler:
+    - gcc
+    - clang
 
 script:
     - mkdir bin && cd bin && cmake .. && make && cd ..

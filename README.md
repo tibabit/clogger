@@ -2,7 +2,9 @@
 
 ### logging library for c/c++
 
-[![Build Status](https://travis-ci.org/tibabit/clogger.svg?branch=master)](https://travis-ci.org/tibabit/clogger) ![License](https://img.shields.io/badge/license-MIT-blue.svg)
+[![Build Status](https://travis-ci.org/tibabit/clogger.svg?branch=master)](https://travis-ci.org/tibabit/clogger)
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![Dependencies](https://img.shields.io/badge/dependencies-none-orange.svg)
 
 ## Features
  - File and console transports

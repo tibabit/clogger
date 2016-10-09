@@ -10,6 +10,7 @@ add_definitions(-Wextra)
 add_definitions(-Wcast-align)
 add_definitions(-w)
 add_definitions(-DDEBUG)
+add_definitions(-std=c99)
 
 file(GLOB_RECURSE CLOGGER_SOURCES
     ${CMAKE_SOURCE_DIR}/src/*.c)

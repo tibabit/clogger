@@ -1,0 +1,8 @@
+sudo: false
+language: c
+
+script:
+    - mkdir bin && cd bin && cmake .. && make && cd ..
+    - ./bin/test/console_transport_test
+    - ./bin/test/default_logger_test
+    - ./bin/test/file_transport_test

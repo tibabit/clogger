@@ -48,6 +48,7 @@
 #define DEFAULT_LOG_SEVERITY            SEVERITY_INFO
 #define DEFAULT_LOG_FORMAT_FILE         "%y - %t: %m%n"
 #define DEFAULT_LOG_FORMAT_CONSOLE      "%t: %m%n"
+#define DEFAULT_DATETIME_FORMAT         "%FT%TZ"
 
 
 #define NEWLINE     "\n"

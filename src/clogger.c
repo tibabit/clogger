@@ -147,6 +147,7 @@ void clogger_add_transport(clogger *logger, transport_t* transport)
 
     logger->transports = realloc(logger->transports, sizeof(transport_t*) * (logger->num_transport + 1));
     ENSURE(logger->transports != NULL);
+    transport->logger = logger;
 
     logger->transports[logger->num_transport] = transport;
     logger->num_transport++;
@@ -167,7 +168,6 @@ void clogger_log_priv(clogger* logger,
     log_entry->title = title;
     log_entry->severity = severity;
     log_entry->timestamp = time(NULL);
-    log_entry->catagory = logger->catagory;
     clogger_prepare_log_message(&log_entry->message, frmt, vargs);
 
     ENSURE(log_entry != NULL);

@@ -29,6 +29,7 @@
 #include "internals.h"
 #include "log_entry.h"
 #include "message_buffer.h"
+#include "transport.h"
 
 #define FORMAT_TIME         'y'
 #define FORMAT_TITLE        't'
@@ -36,9 +37,9 @@
 #define FORMAT_MESSAGE      'm'
 #define FORMAT_NEWLINE      'n'
 
-typedef message_buffer_t* (*log_formatter_fn)(const string_t frmt, log_entry_t* entry);
+typedef message_buffer_t* (*log_formatter_fn)(transport_t* transport, log_entry_t* entry);
 
-message_buffer_t* log_formatter_format(const string_t frmt, log_entry_t* entry);
+message_buffer_t* log_formatter_format(transport_t* transport, log_entry_t* entry);
 
 #endif /* end of include guard: LOG_FORMATTER_H */
 

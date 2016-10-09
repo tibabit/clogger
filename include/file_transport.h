@@ -28,9 +28,28 @@
 
 #include <stdio.h>
 
+#include "log_formatter.h"
 #include "transport.h"
 
-typedef struct _file_transport file_transport_t;
+typedef struct file_transport
+{
+    /** inherited from base class */
+    transport_t super;
+
+    /** belong to this class only */
+    /** formatting related */
+    log_formatter_fn formatter;
+    string_t log_format;
+    bool_t colorize;        // whether to show colorful log (for console transport only)
+    string_t colors[SEVERITY_MAX];
+    string_t color_normal;
+
+    /* stream related */
+    FILE *stream;
+    string_t filename;
+    bool_t is_console;      // true of transport type is console
+    bool_t append;          // append or create new every time
+}file_transport_t;
 
 file_transport_t * file_transport_new(string_t filename);
 int file_transport_setopt(file_transport_t *transport, transport_option_t option, unsigned long data);

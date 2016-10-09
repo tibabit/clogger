@@ -60,6 +60,7 @@ typedef unsigned char bool_t;
     {                           \
         free(ptr);              \
     }
+
 #define FREE_AND_COPY(ptr, str) \
     FREE_IF_NOT_NULL(ptr);      \
     ptr = strdup(str);

@@ -25,31 +25,6 @@
 #include "file_transport.h"
 
 #include <string.h>
-
-#include "log_formatter.h"
-
-typedef struct _file_transport
-{
-    /** inherited from base class */
-    msg_writer_fn write;
-    destroy_transport_fn destroy;
-    log_severity_t severity;
-
-    /** belong to this class only */
-    /** formatting related */
-    log_formatter_fn formatter;
-    string_t log_format;
-    bool_t colorize;        // where to show colorful log (for console transport only)
-    string_t colors[SEVERITY_MAX];
-    string_t color_normal;
-
-    /* stream related */
-    FILE *stream;
-    string_t filename;
-    bool_t is_console;      // true of transport type is console
-    bool_t append;          // append or create new every time
-}file_transport_t;
-
 #include <stdlib.h>
 
 #include "internals.h"
@@ -72,9 +47,11 @@ file_transport_t * file_transport_new(string_t filename)
 
     ENSURE(transport != NULL, NULL);
 
-    transport->write = file_transport_write;
-    transport->destroy = file_transport_destory;
-    transport->severity = DEFAULT_LOG_SEVERITY;
+    transport_new(&transport->super);
+
+    transport->super.write = file_transport_write;
+    transport->super.destroy = file_transport_destory;
+    transport->super.severity = DEFAULT_LOG_SEVERITY;
     transport->append = TRUE;
 
     // initialize colors
@@ -90,6 +67,7 @@ file_transport_t * file_transport_new(string_t filename)
 
     file_transport_setopt(transport, TRANSPORT_OPT_LOG_FORMATTER, (unsigned long)log_formatter_format);
     file_transport_setopt(transport, TRANSPORT_OPT_LOG_FORMAT, (unsigned long)DEFAULT_LOG_FORMAT_FILE);
+    file_transport_setopt(transport, TRANSPORT_OPT_DATETIME_FORMAT, (unsigned long)DEFAULT_DATETIME_FORMAT);
 
     if (filename != NULL)
     {
@@ -115,7 +93,7 @@ void file_transport_write(transport_t *transport, log_entry_t *entry)
 
     file_transport_t *file_transport = (file_transport_t *)transport;
 
-    message_buffer_t* buf = file_transport->formatter(file_transport->log_format, entry);
+    message_buffer_t* buf = file_transport->formatter((transport_t*)file_transport, entry);
     ENSURE(buf != NULL);
 
     if (file_transport->colorize && file_transport->is_console)
@@ -190,9 +168,14 @@ int file_transport_setopt(file_transport_t *transport, transport_option_t option
         FREE_AND_COPY(transport->log_format, (string_t)data);
         return 0;
     }
+    else if (TRANSPORT_OPT_DATETIME_FORMAT == option)
+    {
+        strncpy(transport->super.datetime_format, (string_t)data, TRANSPORT_DATE_TIME_FORMAT_MAX_SIZE);
+        return 0;
+    }
     else if (TRANSPORT_OPT_SEVERITY == option)
     {
-        transport->severity = (log_severity_t)data;
+        transport->super.severity = (log_severity_t)data;
         return 0;
     }
     else if (TRANSPORT_OPT_COLORIZE == option)

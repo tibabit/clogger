@@ -29,22 +29,26 @@
 #include "log_formatter.h"
 #include "internals.h"
 #include "config.h"
+#include "file_transport.h"
+#include "clogger.h"
 
-#define DATE_TIME_STR_SIZE 32
+#define DATE_TIME_STR_SIZE 64
 
 #define NULL_TEXT           "(null)"
 #define IF_NULL(str, alt)   (((str) == NULL) ? (alt) : (str))
 
-message_buffer_t* log_formatter_format(const string_t frmt, log_entry_t* entry)
+message_buffer_t* log_formatter_format(transport_t* transport, log_entry_t* entry)
 {
-    ASSERT(frmt != NULL, NULL);
+    ASSERT(transport != NULL, NULL);
     ASSERT(entry != NULL, NULL);
+
+    file_transport_t* file_transport = (file_transport_t*) transport;
 
     message_buffer_t* buf = message_buffer_new(0);
 
     ENSURE(buf != NULL, NULL);
 
-    string_t src = frmt;
+    string_t src = file_transport->log_format;
     size_t len = 0;
 
     while (*src != '\0')
@@ -62,7 +66,10 @@ message_buffer_t* log_formatter_format(const string_t frmt, log_entry_t* entry)
                     case FORMAT_TIME:
                         {
                             char datetime[DATE_TIME_STR_SIZE] = {0};
-                            len = strftime(datetime, DATE_TIME_STR_SIZE, "%FT%TZ", gmtime(&entry->timestamp));
+                            len = strftime(datetime,
+                                    DATE_TIME_STR_SIZE,
+                                    transport->datetime_format,
+                                    gmtime(&entry->timestamp));
                             message_buffer_append(buf,
                                     datetime,
                                     len);
@@ -75,8 +82,8 @@ message_buffer_t* log_formatter_format(const string_t frmt, log_entry_t* entry)
                         break;
                     case FORMAT_CATAGORY:
                         message_buffer_append(buf,
-                                IF_NULL(entry->catagory, NULL_TEXT),
-                                strlen(IF_NULL(entry->catagory, NULL_TEXT)));
+                                IF_NULL(transport->logger->catagory, NULL_TEXT),
+                                strlen(IF_NULL(transport->logger->catagory, NULL_TEXT)));
                         break;
                     case FORMAT_MESSAGE:
                         message_buffer_append(buf,

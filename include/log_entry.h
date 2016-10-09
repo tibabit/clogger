@@ -57,7 +57,6 @@ typedef struct
     log_severity_t severity;
     string_t title;
     time_t  timestamp;
-    string_t catagory;
     string_t message;
 }log_entry_t;
 

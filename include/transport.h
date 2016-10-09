@@ -28,7 +28,10 @@
 
 #include "log_entry.h"
 
+#define TRANSPORT_DATE_TIME_FORMAT_MAX_SIZE         64
+
 typedef struct _transport transport_t;
+typedef struct _clogger clogger;
 
 typedef void (*msg_writer_fn)(transport_t *transport, log_entry_t *entry);
 typedef void (*destroy_transport_fn)(transport_t *transport);
@@ -38,14 +41,20 @@ typedef struct _transport
     msg_writer_fn write;
     destroy_transport_fn destroy;
     log_severity_t severity;
+    clogger *logger;
+    char datetime_format[TRANSPORT_DATE_TIME_FORMAT_MAX_SIZE];
 }transport_t;
 
 typedef enum
 {
     TRANSPORT_OPT_LOG_FORMATTER,
     TRANSPORT_OPT_LOG_FORMAT,
+    TRANSPORT_OPT_DATETIME_FORMAT,
     TRANSPORT_OPT_SEVERITY,
     TRANSPORT_OPT_COLORIZE,
 }transport_option_t;
+
+transport_t* transport_new(transport_t* transport);
+void transport_destroy(transport_t* transport);
 
 #endif /* end of include guard: TRANSPORT_H */

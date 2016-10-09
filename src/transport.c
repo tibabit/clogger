@@ -22,4 +22,22 @@
  * SOFTWARE.
  */
 
+#include "transport.h"
 
+#include <string.h>
+
+transport_t* transport_new(transport_t* transport)
+{
+    ASSERT(transport != NULL, transport);
+
+    memset(transport, 0x0, sizeof(transport_t));
+
+    return transport;
+}
+
+void transport_destroy(transport_t* transport)
+{
+    ASSERT(transport != NULL);
+
+    free(transport);
+}

@@ -26,7 +26,7 @@
 
 #define LOG_FORMATTER_H
 
-#include "internals.h"
+#include "typedefs.h"
 #include "log_entry.h"
 #include "message_buffer.h"
 #include "transport.h"
@@ -37,9 +37,17 @@
 #define FORMAT_MESSAGE      'm'
 #define FORMAT_NEWLINE      'n'
 
+#ifdef __cplusplus
+extern "C" {
+#endif // __cplusplus
+
 typedef message_buffer_t* (*log_formatter_fn)(transport_t* transport, log_entry_t* entry);
 
 message_buffer_t* log_formatter_format(transport_t* transport, log_entry_t* entry);
+
+#ifdef __cplusplus
+}
+#endif // __cplusplus
 
 #endif /* end of include guard: LOG_FORMATTER_H */
 

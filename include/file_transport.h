@@ -31,6 +31,10 @@
 #include "log_formatter.h"
 #include "transport.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif // __cplusplus
+
 typedef struct file_transport
 {
     /** inherited from base class */
@@ -54,4 +58,7 @@ typedef struct file_transport
 file_transport_t * file_transport_new(string_t filename);
 int file_transport_setopt(file_transport_t *transport, transport_option_t option, unsigned long data);
 
+#ifdef __cplusplus
+}
+#endif // __cplusplus
 #endif /* end of include guard: FILE_TRANSPORT_H */

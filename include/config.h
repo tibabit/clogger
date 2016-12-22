@@ -43,7 +43,7 @@
 #define COLOR_NOTICE            COLOR_BLUE
 #define COLOR_INFO              COLOR_GREEN
 #define COLOR_DEBUG             COLOR_CYAN
-#define COLOR_NORMAL            COLOR_WHITE
+#define COLOR_NORMAL            ("\x1b[0m")
 
 #define DEFAULT_LOG_SEVERITY            SEVERITY_INFO
 #define DEFAULT_LOG_FORMAT_FILE         "%y - %t: %m%n"

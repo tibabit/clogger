@@ -34,12 +34,15 @@
 
 #include <string.h>
 
-#include "internals.h"
+#include "typedefs.h"
 #include "transport.h"
 #include "log_filter.h"
 #include "console_transport.h"
 #include "file_transport.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif // __cplusplus
 typedef struct _clogger clogger;
 
 typedef void (*generic_log_fn)(clogger* logger, const string_t, const string_t, ...);
@@ -90,5 +93,9 @@ void clogger_warnd   ( const string_t frmt, ...);
 void clogger_noticed ( const string_t frmt, ...);
 void clogger_infod   ( const string_t frmt, ...);
 void clogger_debugd  ( const string_t frmt, ...);
+
+#ifdef __cplusplus
+}
+#endif // __cplusplus
 
 #endif /* CLOGGER_H_ */

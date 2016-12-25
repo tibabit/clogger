@@ -204,12 +204,7 @@ void clogger_prepare_log_message(string_t *message, string_t frmt, va_list* varg
     ASSERT(message != NULL);
     ASSERT(frmt != NULL);
 
-    FILE* devNull = fopen("/dev/null", "w");
-    ENSURE(devNull != NULL);
-
     vasprintf(message, frmt, *vargs);
-
-    fclose(devNull);
 }
 
 #if 0

@@ -137,7 +137,7 @@ void clogger_add_severity(clogger *logger, log_severity_t severity, const string
     logger->severities = realloc(logger->severities, sizeof(string_t) * (logger->severity_levels + 1));
     ENSURE(logger->severities != NULL);
 
-    logger->severities[logger->severity_levels] = strdup(title);
+    FREE_AND_COPY(logger->severities[logger->severity_levels], title);
     logger->severity_levels++;
 }
 

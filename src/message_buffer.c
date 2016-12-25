@@ -69,7 +69,7 @@ int message_buffer_append(message_buffer_t *buffer, string_t data, size_t size)
     ASSERT(data != NULL, -1);
     if (buffer->len + size >= buffer->capacity)
     {
-        int res = message_buffer_resize(buffer, buffer->len * 2);
+        int res = message_buffer_resize(buffer, buffer->capacity * 2);
 
         ENSURE(res == 0, res);
     }
@@ -101,4 +101,6 @@ int message_buffer_resize(message_buffer_t* buffer, size_t new_size)
     ASSERT(buffer->data != NULL, -1);
 
     buffer->capacity = new_size;
+
+    return 0;
 }

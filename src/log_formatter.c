@@ -101,6 +101,7 @@ message_buffer_t* log_formatter_format(transport_t* transport, log_entry_t* entr
                 break;
             default:
                 message_buffer_append(buf, src, 1);
+                break;
         }
         src++;
     }

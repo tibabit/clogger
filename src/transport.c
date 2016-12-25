@@ -47,7 +47,12 @@ void transport_destroy(transport_t* transport)
 
 int transport_setopt(transport_t *transport, transport_option_t option, unsigned long long int data)
 {
-    if (TRANSPORT_OPT_SEVERITY == option)
+    if (TRANSPORT_OPT_NAME == option)
+    {
+        FREE_AND_COPY(transport->name, (string_t)data);
+        return 0;
+    }
+    else if (TRANSPORT_OPT_SEVERITY == option)
     {
         transport->severity = (log_severity_t)data;
         return 0;

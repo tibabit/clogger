@@ -47,6 +47,7 @@ typedef struct _transport
     log_severity_t severity;
     clogger *logger;
     char datetime_format[TRANSPORT_DATE_TIME_FORMAT_MAX_SIZE];
+    string_t name;
 }transport_t;
 
 typedef enum
@@ -54,6 +55,7 @@ typedef enum
     TRANSPORT_OPT_LOG_FORMATTER,
     TRANSPORT_OPT_LOG_FORMAT,
     TRANSPORT_OPT_DATETIME_FORMAT,
+    TRANSPORT_OPT_NAME,
     TRANSPORT_OPT_SEVERITY,
     TRANSPORT_OPT_COLORIZE,
 }transport_option_t;

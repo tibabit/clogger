@@ -64,4 +64,7 @@
     ptr = malloc(strlen(str));  \
     strcpy(ptr, str);
 
+#define EQUALS(str1, str2)      \
+    strcmp(str1, str2) == 0
+
 #endif /* end of include guard: INTERNALS_H */

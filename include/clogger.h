@@ -71,6 +71,7 @@ typedef struct _clogger
 clogger* clogger_init(void);
 void clogger_destroy(clogger *logger);
 void clogger_add_transport(clogger *logger, transport_t* transport);
+transport_t* clogger_get_transport(clogger *logger, string_t name);
 
 //! logging functions declarations
 void clogger_log    ( clogger* logger, const string_t title, const string_t frmt, ...);

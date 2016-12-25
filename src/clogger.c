@@ -154,6 +154,22 @@ void clogger_add_transport(clogger *logger, transport_t* transport)
     logger->num_transport++;
 }
 
+transport_t* clogger_get_transport(clogger *logger, string_t name)
+{
+    ASSERT(logger != NULL, NULL);
+    ASSERT(name != NULL, NULL);
+    size_t i;
+    for (i = 0; i < logger->num_transport; i++)
+    {
+        if (EQUALS(name, logger->transports[i]->name))
+        {
+            return logger->transports[i];
+        }
+    }
+
+    return NULL;
+}
+
 void clogger_log_priv(clogger* logger,
         log_severity_t severity,
         const string_t title,

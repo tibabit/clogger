@@ -25,6 +25,8 @@
 #include "transport.h"
 
 #include <string.h>
+#include <stdlib.h>
+
 #include "internals.h"
 
 transport_t* transport_new(transport_t* transport)
@@ -41,4 +43,15 @@ void transport_destroy(transport_t* transport)
     ASSERT(transport != NULL);
 
     free(transport);
+}
+
+int transport_setopt(transport_t *transport, transport_option_t option, unsigned long long int data)
+{
+    if (TRANSPORT_OPT_SEVERITY == option)
+    {
+        transport->severity = (log_severity_t)data;
+        return 0;
+    }
+
+    return -1;
 }

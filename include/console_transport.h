@@ -34,9 +34,9 @@ extern "C" {
 
 typedef file_transport_t console_transport_t;
 
-#define console_transport_setopt file_transport_setopt
 
 console_transport_t * console_transport_new();
+int console_transport_setopt(console_transport_t *transport, transport_option_t option, unsigned long long int data);
 
 #ifdef __cplusplus
 }

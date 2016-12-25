@@ -43,3 +43,14 @@ console_transport_t * console_transport_new()
 
     return transport;
 }
+
+int console_transport_setopt(console_transport_t *transport, transport_option_t option, unsigned long long int data)
+{
+    if (TRANSPORT_OPT_COLORIZE == option)
+    {
+        transport->colorize = data > 0;
+        return 0;
+    }
+
+    return file_transport_setopt((file_transport_t*)transport, option, data);
+}

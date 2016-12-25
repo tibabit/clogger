@@ -35,5 +35,8 @@
 #vim files
 *.swp
 
+# ctags file
+tags
+
 #output directory
 bin/

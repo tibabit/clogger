@@ -45,10 +45,12 @@
 #define COLOR_DEBUG             COLOR_CYAN
 #define COLOR_NORMAL            ("\x1b[0m")
 
-#define DEFAULT_LOG_SEVERITY            SEVERITY_INFO
-#define DEFAULT_LOG_FORMAT_FILE         "%y - %t: %m%n"
-#define DEFAULT_LOG_FORMAT_CONSOLE      "%t: %m%n"
-#define DEFAULT_DATETIME_FORMAT         "%FT%TZ"
+#define DEFAULT_LOG_SEVERITY                SEVERITY_INFO
+#define DEFAULT_LOG_FORMAT_FILE             "%y - %t: %m%n"
+#define DEFAULT_LOG_FORMAT_CONSOLE          "%t: %m%n"
+#define DEFAULT_DATETIME_FORMAT             "%FT%TZ"
+#define DEFAULT_TRANSPORT_NAME_FILE         "file"
+#define DEFAULT_TRANSPORT_NAME_CONSOLE      "console"
 
 
 #define NEWLINE     "\n"

@@ -68,6 +68,7 @@ file_transport_t * file_transport_new(string_t filename)
     file_transport_setopt(transport, TRANSPORT_OPT_LOG_FORMATTER, (unsigned long)log_formatter_format);
     file_transport_setopt(transport, TRANSPORT_OPT_LOG_FORMAT, (unsigned long)DEFAULT_LOG_FORMAT_FILE);
     file_transport_setopt(transport, TRANSPORT_OPT_DATETIME_FORMAT, (unsigned long)DEFAULT_DATETIME_FORMAT);
+    file_transport_setopt(transport, TRANSPORT_OPT_NAME, (unsigned long)DEFAULT_TRANSPORT_NAME_FILE);
 
     if (filename != NULL)
     {

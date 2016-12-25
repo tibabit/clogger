@@ -77,7 +77,7 @@ file_transport_t * file_transport_new(string_t filename)
         {
             goto error;
         }
-        transport->filename = strdup(filename);
+        FREE_AND_COPY(transport->filename, filename);
     }
     return transport;
 
@@ -153,7 +153,7 @@ void file_transport_set_stream(file_transport_t *transport, FILE *stream)
     transport->stream = stream;
 }
 
-int file_transport_setopt(file_transport_t *transport, transport_option_t option, unsigned long data)
+int file_transport_setopt(file_transport_t *transport, transport_option_t option, unsigned long long int data)
 {
     ASSERT(transport != NULL, -1);
     if (TRANSPORT_OPT_LOG_FORMATTER == option)

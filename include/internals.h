@@ -61,6 +61,7 @@
 
 #define FREE_AND_COPY(ptr, str) \
     FREE_IF_NOT_NULL(ptr);      \
-    ptr = strdup(str);
+    ptr = malloc(strlen(str));  \
+    strcpy(ptr, str);
 
 #endif /* end of include guard: INTERNALS_H */

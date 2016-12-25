@@ -2,6 +2,7 @@ macro(compile_test name)
     add_executable(${name}_test "${name}.test.c")
     target_link_libraries(${name}_test clogger)
     add_test(${name}_test ${name}_test)
+    install(TARGETS ${name}_test DESTINATION share/clogger)
 endmacro(compile_test)
 
 compile_test(console_transport)

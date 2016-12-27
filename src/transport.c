@@ -41,6 +41,7 @@ transport_t* transport_new(transport_t* transport)
 void transport_destroy(transport_t* transport)
 {
     ASSERT(transport != NULL);
+    FREE_IF_NOT_NULL(transport->name);
 
     free(transport);
 }

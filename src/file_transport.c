@@ -138,6 +138,8 @@ void file_transport_destory(transport_t *transport)
     }
     FREE_IF_NOT_NULL(file_transport->filename);
 
+    transport_destroy(transport);
+
     free(transport);
 
 }

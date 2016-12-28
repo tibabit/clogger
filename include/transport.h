@@ -61,6 +61,7 @@ typedef enum
 }transport_option_t;
 
 transport_t* transport_new(transport_t* transport);
+void transport_release(transport_t* transport);
 void transport_destroy(transport_t* transport);
 int transport_setopt(transport_t *transport, transport_option_t option, unsigned long long int data);
 

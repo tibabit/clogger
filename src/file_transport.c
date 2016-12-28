@@ -36,7 +36,7 @@
  *
  */
 void file_transport_write(transport_t *transport, log_entry_t *entry);
-void file_transport_destory(transport_t *transport);
+void file_transport_destory(file_transport_t *transport);
 size_t file_transport_write_string(FILE* stream, string_t str);
 
 void file_transport_set_stream(file_transport_t *transport, FILE *stream);
@@ -83,8 +83,36 @@ file_transport_t * file_transport_new(string_t filename)
     return transport;
 
 error:
-    file_transport_destory((transport_t*)transport);
+    file_transport_destory(transport);
     return NULL;
+}
+
+void file_transport_release(file_transport_t* file_transport)
+{
+    int i = 0;
+
+    FREE_IF_NOT_NULL(file_transport->log_format);
+
+    FREE_IF_NOT_NULL(file_transport->color_normal);
+    for (i = 0; i < SEVERITY_MAX; i++)
+    {
+        FREE_IF_NOT_NULL(file_transport->colors[i]);
+    }
+    if (file_transport->stream != NULL)
+    {
+        fclose(file_transport->stream);
+    }
+    FREE_IF_NOT_NULL(file_transport->filename);
+
+    transport_release((transport_t*)file_transport);
+}
+void file_transport_destory(file_transport_t *file_transport)
+{
+    ASSERT(file_transport != NULL);
+
+    file_transport_release(file_transport);
+
+    free(file_transport);
 }
 
 void file_transport_write(transport_t *transport, log_entry_t *entry)
@@ -116,32 +144,6 @@ size_t file_transport_write_string(FILE* stream, string_t str)
     ASSERT(str != NULL, 0);
 
     fwrite(str, 1, strlen(str), stream);
-}
-
-void file_transport_destory(transport_t *transport)
-{
-    ASSERT(transport != NULL);
-    int i = 0;
-
-    file_transport_t *file_transport = (file_transport_t *)transport;
-
-    FREE_IF_NOT_NULL(file_transport->log_format);
-
-    FREE_IF_NOT_NULL(file_transport->color_normal);
-    for (i = 0; i < SEVERITY_MAX; i++)
-    {
-        FREE_IF_NOT_NULL(file_transport->colors[i]);
-    }
-    if (file_transport->stream != NULL)
-    {
-        fclose(file_transport->stream);
-    }
-    FREE_IF_NOT_NULL(file_transport->filename);
-
-    transport_destroy(transport);
-
-    free(transport);
-
 }
 
 void file_transport_set_stream(file_transport_t *transport, FILE *stream)

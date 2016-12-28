@@ -39,6 +39,7 @@ typedef struct _message_buffer_t
 }message_buffer_t;
 
 int message_buffer_resize(message_buffer_t* buffer, size_t new_size);
+int message_buffer_resize_to_fit(message_buffer_t* buffer, size_t new_size);
 
 message_buffer_t * message_buffer_new(size_t capacity)
 {
@@ -67,15 +68,11 @@ int message_buffer_append(message_buffer_t *buffer, string_t data, size_t size)
 {
     ASSERT(buffer != NULL, -1);
     ASSERT(data != NULL, -1);
+    ASSERT(size > 0, -1);
+
     if (buffer->len + size >= buffer->capacity)
     {
-        int new_capacity = buffer->capacity + MESSAGE_BUFFER_BLOCK_SIZE;
-        while(new_capacity < buffer->len + size)
-        {
-            new_capacity += MESSAGE_BUFFER_BLOCK_SIZE;
-        }
-        int res = message_buffer_resize(buffer, new_capacity);
-
+        int res = message_buffer_resize_to_fit(buffer, size);
         ENSURE(res == 0, res);
     }
 
@@ -85,6 +82,31 @@ int message_buffer_append(message_buffer_t *buffer, string_t data, size_t size)
 
     return 0;
 }
+
+int message_buffer_prepend(message_buffer_t *buffer, string_t data, size_t size)
+{
+    ASSERT(buffer != NULL, -1);
+    ASSERT(data != NULL, -1);
+    ASSERT(size > 0, -1);
+
+    int i = 0;
+    if (buffer->len + size >= buffer->capacity)
+    {
+        int res = message_buffer_resize_to_fit(buffer, size);
+        ENSURE(res == 0, res);
+    }
+    for(i = buffer->len + size - 1; i >= size - 1; i--)
+    {
+        buffer->data[i] = buffer->data[i - size];
+    }
+    memcpy(buffer->data, data, size);
+    buffer->len += size;
+    buffer->data[buffer->len] = '\0';
+
+    return 0;
+
+}
+
 size_t message_buffer_get_length(message_buffer_t *buffer)
 {
     ASSERT(buffer != NULL, 0);
@@ -97,6 +119,19 @@ string_t message_buffer_get_data(message_buffer_t *buffer)
     return buffer->data;
 }
 
+int message_buffer_resize_to_fit(message_buffer_t* buffer, size_t size)
+{
+    ASSERT(buffer != NULL, -1);
+    ASSERT(size > 0, -1);
+    int new_capacity = buffer->capacity + MESSAGE_BUFFER_BLOCK_SIZE;
+    while(new_capacity < buffer->len + size)
+    {
+        new_capacity += MESSAGE_BUFFER_BLOCK_SIZE;
+    }
+    int res = message_buffer_resize(buffer, new_capacity);
+
+    ENSURE(res == 0, res);
+}
 int message_buffer_resize(message_buffer_t* buffer, size_t new_size)
 {
     ASSERT(buffer != NULL, -1);

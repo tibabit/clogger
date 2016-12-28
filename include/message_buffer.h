@@ -39,6 +39,7 @@ typedef struct _message_buffer_t message_buffer_t;
 message_buffer_t * message_buffer_new(size_t capacity);
 void message_buffer_destroy(message_buffer_t *buffer);
 int message_buffer_append(message_buffer_t *buffer, string_t data, size_t size);
+int message_buffer_prepend(message_buffer_t *buffer, string_t data, size_t size);
 size_t message_buffer_get_length(message_buffer_t *buffer);
 string_t message_buffer_get_data(message_buffer_t *buffer);
 

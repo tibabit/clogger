@@ -127,9 +127,9 @@ void file_transport_write(transport_t *transport, log_entry_t *entry)
 
     if (file_transport->colorize && file_transport->is_console)
     {
-        file_transport_write_string(file_transport->stream, file_transport->colors[entry->severity]);
+        message_buffer_prepend(buf, file_transport->colors[entry->severity], strlen(file_transport->colors[entry->severity]));
+        message_buffer_append(buf, file_transport->color_normal, strlen(file_transport->color_normal));
         file_transport_write_string(file_transport->stream, message_buffer_get_data(buf));
-        file_transport_write_string(file_transport->stream, file_transport->color_normal);
     }
     else
     {

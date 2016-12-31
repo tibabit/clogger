@@ -30,7 +30,7 @@ cmake .. && make
  * [File transport](#file-transport)
 
 ### Logging
-There are two ways to use logger, one is to use default logger, which prints nice log messages onn the terminal, another
+There are two ways to use logger, one is to use default logger, which prints nice log messages on the terminal, another
 is to instantiate your own logger and add transports to it
 
 ### Using default logger

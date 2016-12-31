@@ -36,7 +36,7 @@
  *
  */
 void file_transport_write(file_transport_t *transport, log_entry_t *entry);
-void file_transport_destory(file_transport_t *transport);
+void file_transport_destroy(file_transport_t *transport);
 size_t file_transport_write_string(FILE* stream, string_t str);
 
 void file_transport_set_stream(file_transport_t *transport, FILE *stream);
@@ -54,7 +54,7 @@ file_transport_t * file_transport_new(string_t filename)
         transport->stream = fopen(filename, transport->append ? "a" : "w");
         if (transport->stream == NULL)
         {
-            file_transport_destory(transport);
+            file_transport_destroy(transport);
             return NULL;
         }
     }
@@ -68,23 +68,13 @@ void file_transport_init(file_transport_t *transport)
 {
     ASSERT(transport != NULL);
 
-    transport_init(&transport->super);
+    transport_init((transport_t*)transport);
+    transport_t *super = (transport_t*)transport;
 
-    transport->super.write = (write_fn_t)file_transport_write;
-    transport->super.destroy = (destroy_fn_t)file_transport_destory;
-    transport->super.severity = DEFAULT_LOG_SEVERITY;
+    super->write = (write_fn_t)file_transport_write;
+    super->destroy = (destroy_fn_t)file_transport_destroy;
+    super->severity = DEFAULT_LOG_SEVERITY;
     transport->append = TRUE;
-
-    // initialize colors
-    FREE_AND_COPY(transport->color_normal, COLOR_NORMAL);
-    FREE_AND_COPY(transport->colors[SEVERITY_EMERGENCY], COLOR_EMERGENCY);
-    FREE_AND_COPY(transport->colors[SEVERITY_ALERT], COLOR_ALERT);
-    FREE_AND_COPY(transport->colors[SEVERITY_CRITICAL], COLOR_CRITICAL);
-    FREE_AND_COPY(transport->colors[SEVERITY_ERROR], COLOR_ERROR);
-    FREE_AND_COPY(transport->colors[SEVERITY_WARNING], COLOR_WARNING);
-    FREE_AND_COPY(transport->colors[SEVERITY_NOTICE], COLOR_NOTICE);
-    FREE_AND_COPY(transport->colors[SEVERITY_INFO], COLOR_INFO);
-    FREE_AND_COPY(transport->colors[SEVERITY_DEBUG], COLOR_DEBUG);
 
     file_transport_setopt(transport, TRANSPORT_OPT_LOG_FORMATTER, (transport_opt_data_t)log_formatter_format);
     file_transport_setopt(transport, TRANSPORT_OPT_LOG_FORMAT, (transport_opt_data_t)DEFAULT_LOG_FORMAT_FILE);
@@ -98,11 +88,6 @@ void file_transport_release(file_transport_t* file_transport)
 
     FREE_IF_NOT_NULL(file_transport->log_format);
 
-    FREE_IF_NOT_NULL(file_transport->color_normal);
-    for (i = 0; i < SEVERITY_MAX; i++)
-    {
-        FREE_IF_NOT_NULL(file_transport->colors[i]);
-    }
     if (file_transport->stream != NULL)
     {
         fclose(file_transport->stream);
@@ -111,7 +96,7 @@ void file_transport_release(file_transport_t* file_transport)
 
     transport_release((transport_t*)file_transport);
 }
-void file_transport_destory(file_transport_t *file_transport)
+void file_transport_destroy(file_transport_t *file_transport)
 {
     ASSERT(file_transport != NULL);
 
@@ -130,17 +115,7 @@ void file_transport_write(file_transport_t *transport, log_entry_t *entry)
     message_buffer_t* buf = file_transport->formatter((transport_t*)file_transport, entry);
     ENSURE(buf != NULL);
 
-    if (file_transport->colorize && file_transport->is_console)
-    {
-        message_buffer_prepend(buf, file_transport->colors[entry->severity], strlen(file_transport->colors[entry->severity]));
-        message_buffer_append(buf, file_transport->color_normal, strlen(file_transport->color_normal));
-        file_transport_write_string(file_transport->stream, message_buffer_get_data(buf));
-    }
-    else
-    {
-        file_transport_write_string(file_transport->stream, message_buffer_get_data(buf));
-    }
-
+    file_transport_write_string(file_transport->stream, message_buffer_get_data(buf));
     message_buffer_destroy(buf);
 }
 size_t file_transport_write_string(FILE* stream, string_t str)
@@ -156,10 +131,6 @@ void file_transport_set_stream(file_transport_t *transport, FILE *stream)
     ASSERT(transport != NULL);
     ASSERT(stream != NULL);
 
-    if (stream == stdout)
-    {
-        transport->is_console = TRUE;
-    }
     transport->stream = stream;
 }
 
@@ -176,11 +147,6 @@ int file_transport_setopt(file_transport_t *transport, transport_option_t option
     {
         ASSERT((void*)data != NULL, -1);
         FREE_AND_COPY(transport->log_format, (string_t)data);
-        return 0;
-    }
-    else if (TRANSPORT_OPT_DATETIME_FORMAT == option)
-    {
-        strncpy(transport->super.datetime_format, (string_t)data, TRANSPORT_DATE_TIME_FORMAT_MAX_SIZE);
         return 0;
     }
     return transport_setopt((transport_t*)transport, option, data);

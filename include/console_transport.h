@@ -32,10 +32,20 @@
 extern "C" {
 #endif // __cplusplus
 
-typedef file_transport_t console_transport_t;
+typedef struct console_transport
+{
+    /** inherited from base class */
+    file_transport_t super;
 
+    bool_t colorize;        // whether to show colorful log (for console transport only)
+    string_t colors[SEVERITY_MAX];
+    string_t color_normal;
+}console_transport_t;
 
 console_transport_t * console_transport_new();
+void console_transport_init(console_transport_t *transport);
+void console_transport_release(console_transport_t *transport);
+void console_transport_destroy(console_transport_t *transport);
 int console_transport_setopt(console_transport_t *transport, transport_option_t option, transport_opt_data_t data);
 
 #ifdef __cplusplus

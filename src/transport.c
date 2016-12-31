@@ -75,6 +75,11 @@ int transport_setopt(transport_t *transport, transport_option_t option, transpor
         transport->severity = (log_severity_t)data;
         return 0;
     }
+    else if (TRANSPORT_OPT_DATETIME_FORMAT == option)
+    {
+        strncpy(transport->datetime_format, (string_t)data, TRANSPORT_DATE_TIME_FORMAT_MAX_SIZE);
+        return 0;
+    }
 
     return -1;
 }

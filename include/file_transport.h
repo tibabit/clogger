@@ -44,14 +44,10 @@ typedef struct file_transport
     /** formatting related */
     log_formatter_fn formatter;
     string_t log_format;
-    bool_t colorize;        // whether to show colorful log (for console transport only)
-    string_t colors[SEVERITY_MAX];
-    string_t color_normal;
 
     /* stream related */
     FILE *stream;
     string_t filename;
-    bool_t is_console;      // true of transport type is console
     bool_t append;          // append or create new every time
 }file_transport_t;
 

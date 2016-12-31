@@ -25,24 +25,90 @@
 #include "console_transport.h"
 
 #include <stdlib.h>
+#include <string.h>
 
 #include "internals.h"
 #include "config.h"
 
 void file_transport_set_stream(file_transport_t *transport, FILE *stream);
+size_t file_transport_write_string(FILE* stream, string_t str);
+void console_transport_write(console_transport_t *transport, log_entry_t *entry);
 
 console_transport_t * console_transport_new()
 {
-    console_transport_t *transport = file_transport_new(NULL);
+    console_transport_t *transport = CALLOC(console_transport_t);
 
     ENSURE(transport != NULL, NULL);
 
-    file_transport_set_stream(transport, stdout);
-    console_transport_setopt(transport, TRANSPORT_OPT_LOG_FORMAT, (transport_opt_data_t)DEFAULT_LOG_FORMAT_CONSOLE);
-    console_transport_setopt(transport, TRANSPORT_OPT_COLORIZE, (transport_opt_data_t)TRUE);
-    console_transport_setopt(transport, TRANSPORT_OPT_NAME, (transport_opt_data_t)DEFAULT_TRANSPORT_NAME_CONSOLE);
+    console_transport_init(transport);
 
     return transport;
+}
+
+void console_transport_init(console_transport_t *transport)
+{
+    ASSERT(transport != NULL);
+
+    file_transport_init((file_transport_t*)transport);
+    transport_t *super = (transport_t*)transport;
+
+    super->write = (write_fn_t)console_transport_write;
+    super->destroy = (destroy_fn_t)console_transport_destroy;
+
+    file_transport_set_stream((file_transport_t*)transport, stdout);
+    console_transport_setopt(transport, TRANSPORT_OPT_LOG_FORMAT, (transport_opt_data_t)DEFAULT_LOG_FORMAT_CONSOLE);
+    console_transport_setopt(transport, TRANSPORT_OPT_NAME, (transport_opt_data_t)DEFAULT_TRANSPORT_NAME_CONSOLE);
+
+    // initialize colors
+    FREE_AND_COPY(transport->color_normal, COLOR_NORMAL);
+    FREE_AND_COPY(transport->colors[SEVERITY_EMERGENCY], COLOR_EMERGENCY);
+    FREE_AND_COPY(transport->colors[SEVERITY_ALERT], COLOR_ALERT);
+    FREE_AND_COPY(transport->colors[SEVERITY_CRITICAL], COLOR_CRITICAL);
+    FREE_AND_COPY(transport->colors[SEVERITY_ERROR], COLOR_ERROR);
+    FREE_AND_COPY(transport->colors[SEVERITY_WARNING], COLOR_WARNING);
+    FREE_AND_COPY(transport->colors[SEVERITY_NOTICE], COLOR_NOTICE);
+    FREE_AND_COPY(transport->colors[SEVERITY_INFO], COLOR_INFO);
+    FREE_AND_COPY(transport->colors[SEVERITY_DEBUG], COLOR_DEBUG);
+
+}
+
+void console_transport_release(console_transport_t *transport)
+{
+    int i;
+    file_transport_release(&transport->super);
+
+    FREE_IF_NOT_NULL(transport->color_normal);
+    for (i = 0; i < SEVERITY_MAX; i++)
+    {
+        FREE_IF_NOT_NULL(transport->colors[i]);
+    }
+}
+
+void console_transport_destroy(console_transport_t *transport)
+{
+    ASSERT(transport != NULL);
+
+    console_transport_release(transport);
+
+    FREE_IF_NOT_NULL(transport);
+}
+
+void console_transport_write(console_transport_t *transport, log_entry_t *entry)
+{
+    ASSERT(transport != NULL);
+    ASSERT(entry != NULL);
+
+    file_transport_t *file_transport = (file_transport_t *)transport;
+
+    message_buffer_t* buf = file_transport->formatter((transport_t*)file_transport, entry);
+    ENSURE(buf != NULL);
+
+    message_buffer_prepend(buf, transport->colors[entry->severity], strlen(transport->colors[entry->severity]));
+    message_buffer_append(buf, transport->color_normal, strlen(transport->color_normal));
+    file_transport_write_string(file_transport->stream, message_buffer_get_data(buf));
+
+    message_buffer_destroy(buf);
+
 }
 
 int console_transport_setopt(console_transport_t *transport, transport_option_t option, unsigned long long int data)

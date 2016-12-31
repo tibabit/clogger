@@ -62,11 +62,6 @@ clogger* clogger_init(void)
     ENSURE(logger != NULL, NULL);
 
     // initialize log functions
-    logger->log = clogger_log;
-    logger->info = clogger_info;
-    logger->warn = clogger_warn;
-    logger->error = clogger_error;
-    logger->debug = clogger_debug;
 
     // add log formaatter
 

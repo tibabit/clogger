@@ -43,20 +43,30 @@
 #ifdef __cplusplus
 extern "C" {
 #endif // __cplusplus
+
 typedef struct _clogger clogger;
 
-typedef void (*generic_log_fn)(clogger* logger, const string_t, const string_t, ...);
+/*! type definition for generic log function
+ *
+ * \param logger an instance of clogger
+ * \param level log level(e.g.: info, debug, error)
+ * \param frmt printf style format string
+ * \param ... rest argument as per format
+ */
+typedef void (*generic_log_fn)(clogger* logger, const string_t level, const string_t frmt, ...);
+/**
+ * \brief type definition for level log function
+ */
 typedef void (*level_log_fn)(clogger* logger, const string_t, ...);
 
+/** clogger structure
+ *
+ * entry point and handle of clogger instance
+ */
 typedef struct _clogger
 {
-    /** logging functions */
+    /** generic log function */
     generic_log_fn log;
-    level_log_fn info;
-    level_log_fn warn;
-    level_log_fn error;
-    level_log_fn debug;
-
     /** logger configurations */
     string_t catagory;
     size_t num_transport;
@@ -68,6 +78,10 @@ typedef struct _clogger
     log_filter_fn filter;
 } clogger;
 
+/**
+ * \brief create an instance of clogger. In which then you can add various transports
+ * to log at different places
+ */
 clogger* clogger_init(void);
 void clogger_destroy(clogger *logger);
 void clogger_add_transport(clogger *logger, transport_t* transport);

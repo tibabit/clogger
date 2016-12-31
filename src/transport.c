@@ -29,13 +29,23 @@
 
 #include "internals.h"
 
-transport_t* transport_new(transport_t* transport)
+transport_t* transport_new()
 {
-    ASSERT(transport != NULL, transport);
+    transport_t* transport = CALLOC(transport_t);
 
-    memset(transport, 0x0, sizeof(transport_t));
+    ENSURE(transport != NULL, NULL);
+
+    transport_init(transport);
 
     return transport;
+}
+
+void transport_init(transport_t* transport)
+{
+    ASSERT(transport != NULL);
+
+    transport->setopt = transport_setopt;
+
 }
 
 void transport_release(transport_t* transport)
@@ -50,10 +60,10 @@ void transport_destroy(transport_t* transport)
 
     transport_release(transport);
 
-    free(transport);
+    FREE_IF_NOT_NULL(transport);
 }
 
-int transport_setopt(transport_t *transport, transport_option_t option, unsigned long long int data)
+int transport_setopt(transport_t *transport, transport_option_t option, transport_opt_data_t data)
 {
     if (TRANSPORT_OPT_NAME == option)
     {

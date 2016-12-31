@@ -35,7 +35,7 @@
  * private functions
  *
  */
-void file_transport_write(transport_t *transport, log_entry_t *entry);
+void file_transport_write(file_transport_t *transport, log_entry_t *entry);
 void file_transport_destory(file_transport_t *transport);
 size_t file_transport_write_string(FILE* stream, string_t str);
 
@@ -43,14 +43,35 @@ void file_transport_set_stream(file_transport_t *transport, FILE *stream);
 
 file_transport_t * file_transport_new(string_t filename)
 {
-    file_transport_t *transport = calloc(1, sizeof(file_transport_t));
+    file_transport_t *transport = CALLOC(file_transport_t);
 
     ENSURE(transport != NULL, NULL);
 
-    transport_new(&transport->super);
 
-    transport->super.write = file_transport_write;
-    transport->super.destroy = file_transport_destory;
+    if (filename != NULL)
+    {
+        // open file for writing log
+        transport->stream = fopen(filename, transport->append ? "a" : "w");
+        if (transport->stream == NULL)
+        {
+            file_transport_destory(transport);
+            return NULL;
+        }
+    }
+
+    file_transport_init(transport);
+
+    return transport;
+}
+
+void file_transport_init(file_transport_t *transport)
+{
+    ASSERT(transport != NULL);
+
+    transport_init(&transport->super);
+
+    transport->super.write = (write_fn_t)file_transport_write;
+    transport->super.destroy = (destroy_fn_t)file_transport_destory;
     transport->super.severity = DEFAULT_LOG_SEVERITY;
     transport->append = TRUE;
 
@@ -65,26 +86,10 @@ file_transport_t * file_transport_new(string_t filename)
     FREE_AND_COPY(transport->colors[SEVERITY_INFO], COLOR_INFO);
     FREE_AND_COPY(transport->colors[SEVERITY_DEBUG], COLOR_DEBUG);
 
-    file_transport_setopt(transport, TRANSPORT_OPT_LOG_FORMATTER, (unsigned long)log_formatter_format);
-    file_transport_setopt(transport, TRANSPORT_OPT_LOG_FORMAT, (unsigned long)DEFAULT_LOG_FORMAT_FILE);
-    file_transport_setopt(transport, TRANSPORT_OPT_DATETIME_FORMAT, (unsigned long)DEFAULT_DATETIME_FORMAT);
-    file_transport_setopt(transport, TRANSPORT_OPT_NAME, (unsigned long)DEFAULT_TRANSPORT_NAME_FILE);
-
-    if (filename != NULL)
-    {
-        // open file for writing log
-        transport->stream = fopen(filename, transport->append ? "a" : "w");
-        if (transport->stream == NULL)
-        {
-            goto error;
-        }
-        FREE_AND_COPY(transport->filename, filename);
-    }
-    return transport;
-
-error:
-    file_transport_destory(transport);
-    return NULL;
+    file_transport_setopt(transport, TRANSPORT_OPT_LOG_FORMATTER, (transport_opt_data_t)log_formatter_format);
+    file_transport_setopt(transport, TRANSPORT_OPT_LOG_FORMAT, (transport_opt_data_t)DEFAULT_LOG_FORMAT_FILE);
+    file_transport_setopt(transport, TRANSPORT_OPT_DATETIME_FORMAT, (transport_opt_data_t)DEFAULT_DATETIME_FORMAT);
+    file_transport_setopt(transport, TRANSPORT_OPT_NAME, (transport_opt_data_t)DEFAULT_TRANSPORT_NAME_FILE);
 }
 
 void file_transport_release(file_transport_t* file_transport)
@@ -115,7 +120,7 @@ void file_transport_destory(file_transport_t *file_transport)
     free(file_transport);
 }
 
-void file_transport_write(transport_t *transport, log_entry_t *entry)
+void file_transport_write(file_transport_t *transport, log_entry_t *entry)
 {
     ASSERT(transport != NULL);
     ASSERT(entry != NULL);
@@ -158,7 +163,7 @@ void file_transport_set_stream(file_transport_t *transport, FILE *stream)
     transport->stream = stream;
 }
 
-int file_transport_setopt(file_transport_t *transport, transport_option_t option, unsigned long long int data)
+int file_transport_setopt(file_transport_t *transport, transport_option_t option, transport_opt_data_t data)
 {
     ASSERT(transport != NULL, -1);
     if (TRANSPORT_OPT_LOG_FORMATTER == option)

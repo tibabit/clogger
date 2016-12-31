@@ -56,8 +56,9 @@ typedef struct file_transport
 }file_transport_t;
 
 file_transport_t * file_transport_new(string_t filename);
+void file_transport_init(file_transport_t *file_transport);
 void file_transport_release(file_transport_t* file_transport);
-int file_transport_setopt(file_transport_t *transport, transport_option_t option, unsigned long long int data);
+int file_transport_setopt(file_transport_t *transport, transport_option_t option, transport_opt_data_t data);
 
 #ifdef __cplusplus
 }

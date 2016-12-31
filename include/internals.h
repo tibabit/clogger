@@ -67,4 +67,6 @@
 #define EQUALS(str1, str2)      \
     strcmp(str1, str2) == 0
 
+#define CALLOC(type)        calloc(1, sizeof(type))
+
 #endif /* end of include guard: INTERNALS_H */

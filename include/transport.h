@@ -36,19 +36,7 @@ extern "C" {
 
 typedef struct _transport transport_t;
 typedef struct _clogger clogger;
-
-typedef void (*msg_writer_fn)(transport_t *transport, log_entry_t *entry);
-typedef void (*destroy_transport_fn)(transport_t *transport);
-
-typedef struct _transport
-{
-    msg_writer_fn write;
-    destroy_transport_fn destroy;
-    log_severity_t severity;
-    clogger *logger;
-    char datetime_format[TRANSPORT_DATE_TIME_FORMAT_MAX_SIZE];
-    string_t name;
-}transport_t;
+typedef unsigned long long int transport_opt_data_t;
 
 typedef enum
 {
@@ -60,10 +48,30 @@ typedef enum
     TRANSPORT_OPT_COLORIZE,
 }transport_option_t;
 
-transport_t* transport_new(transport_t* transport);
+typedef void (*write_fn_t)(transport_t *, log_entry_t *);
+typedef void (*destroy_fn_t)(transport_t *);
+typedef int (*setopt_fn_t)(transport_t *, transport_option_t, transport_opt_data_t);
+
+
+typedef struct _transport
+{
+    log_severity_t severity;
+    clogger *logger;
+    char datetime_format[TRANSPORT_DATE_TIME_FORMAT_MAX_SIZE];
+    string_t name;
+
+    write_fn_t write;
+    destroy_fn_t destroy;
+    setopt_fn_t setopt;
+}transport_t;
+
+
+
+transport_t* transport_new();
+void transport_init(transport_t* transport);
 void transport_release(transport_t* transport);
 void transport_destroy(transport_t* transport);
-int transport_setopt(transport_t *transport, transport_option_t option, unsigned long long int data);
+int transport_setopt(transport_t *transport, transport_option_t option, transport_opt_data_t data);
 
 #ifdef __cplusplus
 }

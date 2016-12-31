@@ -36,7 +36,7 @@ typedef file_transport_t console_transport_t;
 
 
 console_transport_t * console_transport_new();
-int console_transport_setopt(console_transport_t *transport, transport_option_t option, unsigned long long int data);
+int console_transport_setopt(console_transport_t *transport, transport_option_t option, transport_opt_data_t data);
 
 #ifdef __cplusplus
 }

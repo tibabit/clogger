@@ -28,8 +28,8 @@ void test_console_transport()
 {
     clogger* logger = clogger_init();
     // add default transports
-    console_transport_t * console_transport = console_transport_new();
-    console_transport_setopt(console_transport, TRANSPORT_OPT_SEVERITY, SEVERITY_DEBUG);
+    transport_t * console_transport = (transport_t*)console_transport_new();
+    console_transport->setopt(console_transport, TRANSPORT_OPT_SEVERITY, SEVERITY_DEBUG);
     clogger_add_transport(logger, (transport_t *)console_transport);
 
     clogger_emerg(logger, "Emergency type log %s", "arg 1");

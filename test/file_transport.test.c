@@ -29,8 +29,8 @@ void test_file_transport()
 {
     clogger* logger = clogger_init();
 
-    file_transport_t *file_transport = file_transport_new("/tmp/test.log");
-    file_transport_setopt(file_transport, TRANSPORT_OPT_SEVERITY, SEVERITY_DEBUG);
+    transport_t *file_transport = (transport_t*)file_transport_new("/tmp/test.log");
+    file_transport->setopt(file_transport, TRANSPORT_OPT_SEVERITY, SEVERITY_DEBUG);
 
     clogger_add_transport(logger, (transport_t*)file_transport);
 

@@ -40,10 +40,10 @@ void test_default_logger()
 void test_default_logger_change_severity()
 {
     extern clogger *default_logger;
-    console_transport_t* transport = (console_transport_t*)clogger_get_transport(default_logger, "console");
+    transport_t* transport = clogger_get_transport(default_logger, "console");
     if (transport != NULL)
     {
-        console_transport_setopt(transport, TRANSPORT_OPT_SEVERITY, SEVERITY_DEBUG);
+        transport->setopt(transport, TRANSPORT_OPT_SEVERITY, SEVERITY_DEBUG);
     }
     clogger_emergd("Emergency type log %s", "arg 1");
     clogger_alertd("Alert type log");
